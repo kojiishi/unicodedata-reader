@@ -1,42 +1,33 @@
 import re
+import unicodedata
 import urllib.request
 
-class unidata(object):
-  def __init__(self):
-    pass
-
-  @staticmethod
-  def hex(value):
-    hexstr = hex(value)[2:].upper()
-    return ('000' + hexstr)[-4:]
-
-  @staticmethod
-  def loadBidiBrackets():
+class Loader(object):
+  def loadBidiBrackets(self):
     def parseBidiBracketsValue(value):
       columns = re.split(r';\s*', value)
       assert len(columns) == 2
       return {"type": columns[1], "pair": int(columns[0], 16)}
-    return unidata.dictFromUrl(
-        'https://www.unicode.org/Public/UNIDATA/BidiBrackets.txt',
-        parseBidiBracketsValue)
+    return self.dictFromUrl('BidiBrackets.txt', parseBidiBracketsValue)
+
+  def loadScripts(self):
+    return self.dictFromUrl('Scripts.txt')
+
+  def loadScriptExtensions(self):
+    return self.dictFromUrl('ScriptExtensions.txt', lambda v: v.split())
+
+  def dictFromUrl(self, url, converter=None):
+    lines = self.linesFromUrl(url)
+    return Loader.dictFromLines(lines, converter)
+
+  def linesFromUrl(self, name):
+    url = 'https://www.unicode.org/Public/UNIDATA/' + name
+    with urllib.request.urlopen(url) as response:
+      body = response.read().decode('utf-8')
+    return body.splitlines()
 
   @staticmethod
-  def loadScripts():
-    return unidata.dictFromUrl(
-        'https://www.unicode.org/Public/UNIDATA/Scripts.txt')
-
-  @staticmethod
-  def loadScriptExtensions():
-    return unidata.dictFromUrl(
-        'https://www.unicode.org/Public/UNIDATA/ScriptExtensions.txt',
-        lambda v: v.split())
-
-  @staticmethod
-  def dictFromUrl(url, valueConverter=None):
-    return unidata.dictFromLines(unidata.linesFromUrl(url), valueConverter)
-
-  @staticmethod
-  def dictFromLines(lines, valueConverter=None):
+  def dictFromLines(lines, converter=None):
     dict = {}
     for line in lines:
       line = re.sub(r'\s*#.*', '', line)
@@ -45,8 +36,8 @@ class unidata(object):
       columns = re.split(r';\s*', line, 1)
       assert len(columns) == 2
       code, value = columns
-      if valueConverter:
-        value = valueConverter(value)
+      if converter:
+        value = converter(value)
       codeRange = code.split('..')
       if len(codeRange) == 1:
         dict[int(code, 16)] = value
@@ -59,14 +50,29 @@ class unidata(object):
         assert False
     return dict
 
-  @staticmethod
-  def linesFromUrl(url):
-    with urllib.request.urlopen(url) as response:
-      body = response.read().decode('utf-8')
-    return body.splitlines()
+class UniData(object):
+  def __init__(self):
+    loader = Loader()
+    self.bidiBrackets = loader.loadBidiBrackets()
+    self.scripts = loader.loadScripts()
+    self.scriptExtensions = loader.loadScriptExtensions()
 
-bidiBrackets = unidata.loadBidiBrackets()
-scripts = unidata.loadScripts()
-scriptExtensions = unidata.loadScriptExtensions()
-for code, bidiBracket in bidiBrackets.items():
-  print(f'{unidata.hex(code)} {bidiBracket["type"]} {scripts.get(code)} {scriptExtensions.get(code)}')
+  def row(self, code):
+    return [
+      UniData.hex(code),
+      self.bidiBrackets[code]["type"],
+      unicodedata.east_asian_width(chr(code)),
+      self.scripts.get(code),
+      str(self.scriptExtensions.get(code, [])),
+    ]
+
+  @staticmethod
+  def hex(value):
+    hexstr = hex(value)[2:].upper()
+    return ('000' + hexstr)[-4:]
+
+udata = UniData()
+codes = udata.bidiBrackets.keys()
+for code in codes:
+  row = udata.row(code)
+  print(f'{" ".join(row)} # {unicodedata.name(chr(code))}')
