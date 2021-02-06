@@ -7,9 +7,8 @@ class UnicodeDataParser(object):
 
   def parse_bidi_brackets(self):
     def parse_bidi_brackets_value(value):
-      columns = re.split(r';\s*', value)
-      assert len(columns) == 2
-      return {"type": columns[1], "pair": int(columns[0], 16)}
+      assert len(value) == 2
+      return {"type": value[1], "pair": int(value[0], 16)}
     return self.dict_from_name('BidiBrackets.txt', parse_bidi_brackets_value)
 
   def parse_scripts(self):
@@ -35,11 +34,12 @@ class UnicodeDataParser(object):
       line = re.sub(r'\s*#.*', '', line)
       if not line:
         continue
-      columns = re.split(r';\s*', line, 1)
-      assert len(columns) == 2
-      code, value = columns
+      columns = re.split(r';\s*', line)
+      assert len(columns) >= 2
+      value = columns[1] if len(columns) == 2 else columns[1:]
       if converter:
         value = converter(value)
+      code = columns[0]
       codeRange = code.split('..')
       if len(codeRange) == 1:
         dict[int(code, 16)] = value
