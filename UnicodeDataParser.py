@@ -10,19 +10,19 @@ class UnicodeDataParser(object):
       columns = re.split(r';\s*', value)
       assert len(columns) == 2
       return {"type": columns[1], "pair": int(columns[0], 16)}
-    return self.dict_from_url('BidiBrackets.txt', parse_bidi_brackets_value)
+    return self.dict_from_name('BidiBrackets.txt', parse_bidi_brackets_value)
 
   def parse_scripts(self):
-    return self.dict_from_url('Scripts.txt')
+    return self.dict_from_name('Scripts.txt')
 
   def parse_script_extensions(self):
-    return self.dict_from_url('ScriptExtensions.txt', lambda v: v.split())
+    return self.dict_from_name('ScriptExtensions.txt', lambda v: v.split())
 
-  def dict_from_url(self, url, converter=None):
-    lines = self.lines_from_url(url)
+  def dict_from_name(self, name, converter=None):
+    lines = self.lines_from_name(name)
     return self.dict_from_lines(lines, converter)
 
-  def lines_from_url(self, name):
+  def lines_from_name(self, name):
     url = 'https://www.unicode.org/Public/UNIDATA/' + name
     with urllib.request.urlopen(url) as response:
       body = response.read().decode('utf-8')
