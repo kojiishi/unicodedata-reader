@@ -5,6 +5,9 @@ import urllib.request
 
 class UnicodeDataParser(object):
 
+  def parse_blocks(self):
+    return self.dict_from_name('Blocks.txt')
+
   def parse_bidi_brackets(self):
     def parse_bidi_brackets_value(value):
       assert len(value) == 2
@@ -60,10 +63,16 @@ class UnicodeDataParser(object):
   @staticmethod
   def dump_bidi_brackets():
     parser = UnicodeDataParser()
+    blocks = parser.parse_blocks()
     bidi_brackets = parser.parse_bidi_brackets()
     scripts = parser.parse_scripts()
     script_extensions = parser.parse_script_extensions()
+    last_block = None
     for code in bidi_brackets.keys():
+      block = blocks[code]
+      if block != last_block:
+        print(f'# {block}')
+        last_block = block
       row = [
         UnicodeDataParser.hex(code),
         bidi_brackets[code]["type"],
