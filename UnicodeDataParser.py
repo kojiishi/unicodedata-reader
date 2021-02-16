@@ -4,6 +4,14 @@ import unicodedata
 import urllib.request
 
 class UnicodeDataParser(object):
+  """Parse [Unicode character database] files.
+
+  The `unicodedata` provides variety of data in this database,
+  but this class helps when the data you need is not there,
+  or you need more up-to-date data from Unicode.
+  
+  [Unicode character database]: https://unicode.org/reports/tr44/
+  """
 
   def parse_blocks(self):
     return self.dict_from_name('Blocks.txt')
