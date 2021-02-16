@@ -4,7 +4,7 @@ import unicodedata
 import urllib.request
 
 class UnicodeDataParser(object):
-  """Parse [Unicode character database] files.
+  """Parse [Unicode character database] data files.
 
   The `unicodedata` provides variety of data in this database,
   but this class helps when the data you need is not there,
@@ -47,7 +47,7 @@ class UnicodeDataParser(object):
       if not line:
         continue
       # Data columns are separated by ';'.
-      columns = re.split(r';\s*', line)
+      columns = re.split(r'\s*;\s*', line)
       assert len(columns) >= 2
       value = columns[1] if len(columns) == 2 else columns[1:]
       if converter:
