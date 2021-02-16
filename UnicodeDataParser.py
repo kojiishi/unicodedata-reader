@@ -42,14 +42,17 @@ class UnicodeDataParser(object):
   def dict_from_lines(lines, converter=None):
     dict = {}
     for line in lines:
+      # Skip comments.
       line = re.sub(r'\s*#.*', '', line)
       if not line:
         continue
+      # Data columns are separated by ';'.
       columns = re.split(r';\s*', line)
       assert len(columns) >= 2
       value = columns[1] if len(columns) == 2 else columns[1:]
       if converter:
         value = converter(value)
+      # `columns[0]` is a code point or a range of code points.
       code = columns[0]
       codeRange = code.split('..')
       if len(codeRange) == 1:
