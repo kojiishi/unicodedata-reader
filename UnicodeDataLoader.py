@@ -3,32 +3,32 @@ import re
 import unicodedata
 import urllib.request
 
-class UnicodeDataParser(object):
-  """Parse [Unicode character database] data files.
+class UnicodeDataLoader(object):
+  """Load [Unicode character database] data files.
 
-  The `unicodedata` provides variety of data in this database,
-  but this class helps when the data you need is not there,
-  or you need more up-to-date data from Unicode.
+  This class provides data in the [Unicode character database], similar to the
+  `unicodedata`, but with more coverage and is up-to-date by loading the
+  original data files from <https://www.unicode.org/Public/UNIDATA/>.
   
   [Unicode character database]: https://unicode.org/reports/tr44/
   """
 
-  def parse_blocks(self):
-    return self.dict_from_name('Blocks.txt')
-
-  def parse_bidi_brackets(self):
-    def parse_bidi_brackets_value(value):
+  def load_bidi_brackets(self):
+    def convert_bidi_brackets_value(value):
       assert len(value) == 2
       return {"type": value[1], "pair": int(value[0], 16)}
-    return self.dict_from_name('BidiBrackets.txt', parse_bidi_brackets_value)
+    return self.load('BidiBrackets.txt', convert_bidi_brackets_value)
 
-  def parse_scripts(self):
-    return self.dict_from_name('Scripts.txt')
+  def load_blocks(self):
+    return self.load('Blocks.txt')
 
-  def parse_script_extensions(self):
-    return self.dict_from_name('ScriptExtensions.txt', lambda v: v.split())
+  def load_scripts(self):
+    return self.load('Scripts.txt')
 
-  def dict_from_name(self, name, converter=None):
+  def load_script_extensions(self):
+    return self.load('ScriptExtensions.txt', lambda v: v.split())
+
+  def load(self, name, converter=None):
     lines = self.lines_from_name(name)
     return self.dict_from_lines(lines, converter)
 
@@ -73,11 +73,11 @@ class UnicodeDataParser(object):
 
   @staticmethod
   def dump_bidi_brackets():
-    parser = UnicodeDataParser()
-    blocks = parser.parse_blocks()
-    bidi_brackets = parser.parse_bidi_brackets()
-    scripts = parser.parse_scripts()
-    script_extensions = parser.parse_script_extensions()
+    parser = UnicodeDataLoader()
+    blocks = parser.load_blocks()
+    bidi_brackets = parser.load_bidi_brackets()
+    scripts = parser.load_scripts()
+    script_extensions = parser.load_script_extensions()
     last_block = None
     for code in bidi_brackets.keys():
       block = blocks[code]
@@ -85,7 +85,7 @@ class UnicodeDataParser(object):
         print(f'# {block}')
         last_block = block
       row = [
-        UnicodeDataParser.hex(code),
+        UnicodeDataLoader.hex(code),
         bidi_brackets[code]["type"],
         unicodedata.east_asian_width(chr(code)),
         scripts.get(code),
@@ -94,4 +94,4 @@ class UnicodeDataParser(object):
       print(f'{" ".join(row)} # {unicodedata.name(chr(code))}')
 
 if __name__ == '__main__':
-  UnicodeDataParser.dump_bidi_brackets()
+  UnicodeDataLoader.dump_bidi_brackets()
