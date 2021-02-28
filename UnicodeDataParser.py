@@ -4,40 +4,45 @@ import unicodedata
 import urllib.request
 
 
-class UnicodeDataLoader(object):
-    """Load [Unicode character database] data files.
+def _read_unicode_data_lines(name):
+    url = f'https://www.unicode.org/Public/UNIDATA/{name}.txt'
+    with urllib.request.urlopen(url) as response:
+        body = response.read().decode('utf-8')
+    return body.splitlines()
 
-    This class provides data in the [Unicode character database], similar to the
-    `unicodedata`, but with more coverage and is up-to-date by loading the
-    original data files from <https://www.unicode.org/Public/UNIDATA/>.
-    
+
+class UnicodeDataParser(object):
+    """Parse [Unicode character database] data files.
+
+    This class parses data in the [Unicode character database].
+
+    By default, it downloads the data files from <https://www.unicode.org/Public/UNIDATA/>.
+    Custom loader can be used by the constructor argument.
+
     [Unicode character database]: https://unicode.org/reports/tr44/
     """
-    def load_bidi_brackets(self):
+    def __init__(self, read_lines=_read_unicode_data_lines):
+        self._read_lines = read_lines
+
+    def parse_bidi_brackets(self):
         def convert_bidi_brackets_value(value):
             assert len(value) == 2
             return {"type": value[1], "pair": int(value[0], 16)}
 
-        return self.load('BidiBrackets.txt', convert_bidi_brackets_value)
+        return self.parse('BidiBrackets', convert_bidi_brackets_value)
 
-    def load_blocks(self):
-        return self.load('Blocks.txt')
+    def parse_blocks(self):
+        return self.parse('Blocks')
 
-    def load_scripts(self):
-        return self.load('Scripts.txt')
+    def parse_scripts(self):
+        return self.parse('Scripts')
 
-    def load_script_extensions(self):
-        return self.load('ScriptExtensions.txt', lambda v: v.split())
+    def parse_script_extensions(self):
+        return self.parse('ScriptExtensions', lambda v: v.split())
 
-    def load(self, name, converter=None):
-        lines = self.lines_from_name(name)
+    def parse(self, name, converter=None):
+        lines = self._read_lines(name)
         return self.dict_from_lines(lines, converter)
-
-    def lines_from_name(self, name):
-        url = 'https://www.unicode.org/Public/UNIDATA/' + name
-        with urllib.request.urlopen(url) as response:
-            body = response.read().decode('utf-8')
-        return body.splitlines()
 
     @staticmethod
     def dict_from_lines(lines, converter=None):
@@ -72,13 +77,11 @@ class UnicodeDataLoader(object):
         hexstr = hex(value)[2:].upper()
         return ('000' + hexstr)[-4:]
 
-    @staticmethod
-    def dump_bidi_brackets():
-        parser = UnicodeDataLoader()
-        blocks = parser.load_blocks()
-        bidi_brackets = parser.load_bidi_brackets()
-        scripts = parser.load_scripts()
-        script_extensions = parser.load_script_extensions()
+    def dump_bidi_brackets(self):
+        blocks = self.parse_blocks()
+        bidi_brackets = self.parse_bidi_brackets()
+        scripts = self.parse_scripts()
+        script_extensions = self.parse_script_extensions()
         last_block = None
         for code in bidi_brackets.keys():
             block = blocks[code]
@@ -86,7 +89,7 @@ class UnicodeDataLoader(object):
                 print(f'# {block}')
                 last_block = block
             row = [
-                UnicodeDataLoader.hex(code),
+                UnicodeDataParser.hex(code),
                 bidi_brackets[code]["type"],
                 unicodedata.east_asian_width(chr(code)),
                 scripts.get(code),
@@ -96,4 +99,4 @@ class UnicodeDataLoader(object):
 
 
 if __name__ == '__main__':
-    UnicodeDataLoader.dump_bidi_brackets()
+    UnicodeDataParser().dump_bidi_brackets()
