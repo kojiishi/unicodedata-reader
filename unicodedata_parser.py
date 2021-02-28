@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import re
-import unicodedata
 import urllib.request
 
 
@@ -24,20 +23,20 @@ class UnicodeDataParser(object):
     def __init__(self, read_lines=_read_unicode_data_lines):
         self._read_lines = read_lines
 
-    def parse_bidi_brackets(self):
+    def bidi_brackets(self):
         def convert_bidi_brackets_value(value):
             assert len(value) == 2
             return {"type": value[1], "pair": int(value[0], 16)}
 
         return self.parse('BidiBrackets', convert_bidi_brackets_value)
 
-    def parse_blocks(self):
+    def blocks(self):
         return self.parse('Blocks')
 
-    def parse_scripts(self):
+    def scripts(self):
         return self.parse('Scripts')
 
-    def parse_script_extensions(self):
+    def script_extensions(self):
         return self.parse('ScriptExtensions', lambda v: v.split())
 
     def parse(self, name, converter=None):
@@ -76,27 +75,3 @@ class UnicodeDataParser(object):
     def hex(value):
         hexstr = hex(value)[2:].upper()
         return ('000' + hexstr)[-4:]
-
-    def dump_bidi_brackets(self):
-        blocks = self.parse_blocks()
-        bidi_brackets = self.parse_bidi_brackets()
-        scripts = self.parse_scripts()
-        script_extensions = self.parse_script_extensions()
-        last_block = None
-        for code in bidi_brackets.keys():
-            block = blocks[code]
-            if block != last_block:
-                print(f'# {block}')
-                last_block = block
-            row = [
-                UnicodeDataParser.hex(code),
-                bidi_brackets[code]["type"],
-                unicodedata.east_asian_width(chr(code)),
-                scripts.get(code),
-                str(script_extensions.get(code, [])),
-            ]
-            print(f'{" ".join(row)} # {unicodedata.name(chr(code))}')
-
-
-if __name__ == '__main__':
-    UnicodeDataParser().dump_bidi_brackets()
