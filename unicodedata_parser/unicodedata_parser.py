@@ -73,5 +73,4 @@ class UnicodeDataParser(object):
 
     @staticmethod
     def hex(value):
-        hexstr = hex(value)[2:].upper()
-        return ('000' + hexstr)[-4:]
+        return f'{value:04X}'
