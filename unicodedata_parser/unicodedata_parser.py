@@ -31,7 +31,7 @@ class UnicodeDataParser(object):
     def bidi_brackets(self):
         def convert_bidi_brackets_value(value):
             assert len(value) == 2
-            return BidiBrackets(*value)
+            return BidiBrackets(int(value[0], 16), value[1])
 
         return self.parse('BidiBrackets', convert_bidi_brackets_value)
 
