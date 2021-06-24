@@ -21,7 +21,7 @@ def dump_bidi_brackets():
             last_block = block
         row = [
             UnicodeDataParser.hex(code),
-            bidi_brackets[code]["type"],
+            bidi_brackets[code].type,
             unicodedata.east_asian_width(chr(code)),
             scripts.get(code),
             str(script_extensions.get(code, [])),

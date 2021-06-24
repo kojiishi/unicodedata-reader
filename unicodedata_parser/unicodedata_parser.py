@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import collections
 import re
 import urllib.request
 
@@ -10,12 +11,16 @@ def _read_unicode_data_lines(name):
     return body.splitlines()
 
 
+BidiBrackets = collections.namedtuple('BidiBrackets', ['pair', 'type'])
+
+
 class UnicodeDataParser(object):
     """Parse [Unicode character database] data files.
 
     This class parses data in the [Unicode character database].
 
-    By default, it downloads the data files from <https://www.unicode.org/Public/UNIDATA/>.
+    By default, it downloads the data files from
+    <https://www.unicode.org/Public/UNIDATA/>.
     Custom loader can be used by the constructor argument.
 
     [Unicode character database]: https://unicode.org/reports/tr44/
@@ -26,7 +31,7 @@ class UnicodeDataParser(object):
     def bidi_brackets(self):
         def convert_bidi_brackets_value(value):
             assert len(value) == 2
-            return {"type": value[1], "pair": int(value[0], 16)}
+            return BidiBrackets(*value)
 
         return self.parse('BidiBrackets', convert_bidi_brackets_value)
 
