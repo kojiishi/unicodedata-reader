@@ -8,6 +8,27 @@ def u_hex(value):
     return f'{value:04X}'
 
 
+def u_enc(c, encoding):
+    code = 0
+    for byte in c.encode(encoding, 'ignore'):
+        code = code * 256 + byte
+    return u_hex(code) if code else ''
+
+
+def to_unicodes(text):
+    while text:
+        match = re.match(r'([uU]\+?)?([0-9a-fA-F]+),?\s*', text)
+        if match:
+            prefix = match.group(1)
+            hex = match.group(2)
+            if prefix or (len(hex) >= 2 and len(hex) <= 5):
+                yield int(hex, 16)
+                text = text[match.end():]
+                continue
+        yield ord(text[0])
+        text = text[1:]
+
+
 def _read_unicode_data_lines(name):
     url = f'https://www.unicode.org/Public/UNIDATA/{name}.txt'
     with urllib.request.urlopen(url) as response:
