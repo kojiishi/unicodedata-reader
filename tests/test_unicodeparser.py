@@ -1,10 +1,7 @@
-from unicodedata_parser import UnicodeDataParser
+from unicodedata_parser import *
 
 
 def test_hex():
-    def hex(value):
-        return UnicodeDataParser.hex(value)
-
-    assert hex(1) == '0001'
-    assert hex(0xfeff) == 'FEFF'
-    assert hex(0x12345) == '12345'
+    assert u_hex(1) == '0001'
+    assert u_hex(0xfeff) == 'FEFF'
+    assert u_hex(0x12345) == '12345'

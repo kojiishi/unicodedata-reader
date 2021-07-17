@@ -4,6 +4,10 @@ import re
 import urllib.request
 
 
+def u_hex(value):
+    return f'{value:04X}'
+
+
 def _read_unicode_data_lines(name):
     url = f'https://www.unicode.org/Public/UNIDATA/{name}.txt'
     with urllib.request.urlopen(url) as response:
@@ -78,4 +82,4 @@ class UnicodeDataParser(object):
 
     @staticmethod
     def hex(value):
-        return f'{value:04X}'
+        return u_hex(value)
