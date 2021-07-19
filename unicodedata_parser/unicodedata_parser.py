@@ -69,6 +69,9 @@ class UnicodeDataParser(object):
     def script_extensions(self):
         return self.parse('ScriptExtensions', lambda v: v.split())
 
+    def vertical_orientation(self):
+        return self.parse('VerticalOrientation')
+
     def parse(self, name, converter=None):
         lines = self._read_lines(name)
         return self.dict_from_lines(lines, converter)
