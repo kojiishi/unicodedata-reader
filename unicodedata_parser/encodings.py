@@ -6,9 +6,12 @@ from unicodedata_parser import *
 
 def dump_encoding():
     parser = argparse.ArgumentParser()
-    parser.add_argument('text')
+    parser.add_argument('text', nargs='+')
     args = parser.parse_args()
-    encs = ['cp932', 'cp936', 'cp949', 'cp950']
+    # https://docs.python.org/3/library/codecs.html#standard-encodings
+    encs = [
+        'cp932', 'cp936', 'cp949', 'cp950', 'Shift_JIS-2004', 'shift_jisx0213'
+    ]
     header = ['Unicode'] + encs
     print('\t'.join(header))
     for code in to_unicodes(args.text):

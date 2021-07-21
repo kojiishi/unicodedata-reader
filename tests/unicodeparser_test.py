@@ -19,9 +19,15 @@ def test_parse_unicode_list():
     assert run('u1234') == (0x1234, )
     assert run('U+1234') == (0x1234, )
 
-
     assert run('1234 5678') == (0x1234, 0x5678)
     assert run('1234,5678') == (0x1234, 0x5678)
     assert run('1234, 5678') == (0x1234, 0x5678)
 
     assert run('xy') == (ord('x'), ord('y'))
+
+
+def test_parse_unicode_list_array():
+    def run(text):
+        return tuple(to_unicodes(text))
+
+    assert run(['1234', '5678']) == (0x1234, 0x5678)
