@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import collections
+import enum
 import itertools
 import re
 import urllib.request
@@ -46,6 +47,15 @@ def _read_unicode_data_lines(name):
 BidiBrackets = collections.namedtuple('BidiBrackets', ['pair', 'type'])
 
 
+class EmojiType(enum.Flag):
+    Emoji = enum.auto()
+    Emoji_Presentation = enum.auto()
+    Emoji_Modifier = enum.auto()
+    Emoji_Modifier_Base = enum.auto()
+    Emoji_Component = enum.auto()
+    Extended_Pictographic = enum.auto()
+
+
 class UnicodeDataParser(object):
     """Parse [Unicode character database] data files.
 
@@ -70,6 +80,17 @@ class UnicodeDataParser(object):
     def blocks(self):
         return self.parse('Blocks')
 
+    def emoji(self):
+        dict = {}
+
+        def setter(code, value):
+            value |= dict.get(code, EmojiType(0))
+            dict[code] = value
+
+        lines = self._read_lines('emoji/emoji-data')
+        self.parse_lines(lines, setter, converter=lambda v: EmojiType[v])
+        return dict
+
     def scripts(self):
         return self.parse('Scripts')
 
@@ -86,6 +107,15 @@ class UnicodeDataParser(object):
     @staticmethod
     def dict_from_lines(lines, converter=None):
         dict = {}
+
+        def setter(code, value):
+            dict[code] = value
+
+        UnicodeDataParser.parse_lines(lines, setter, converter=converter)
+        return dict
+
+    @staticmethod
+    def parse_lines(lines, setter, converter=None):
         for line in lines:
             # Skip comments.
             line = re.sub(r'\s*#.*', '', line)
@@ -97,19 +127,20 @@ class UnicodeDataParser(object):
             value = columns[1] if len(columns) == 2 else columns[1:]
             if converter:
                 value = converter(value)
+
             # `columns[0]` is a code point or a range of code points.
             code = columns[0]
             codeRange = code.split('..')
             if len(codeRange) == 1:
-                dict[int(code, 16)] = value
+                code = int(code, 16)
+                setter(code, value)
             elif len(codeRange) == 2:
                 min = int(codeRange[0], 16)
                 max = int(codeRange[1], 16)
                 for code in range(min, max + 1):
-                    dict[code] = value
+                    setter(code, value)
             else:
                 assert False
-        return dict
 
     @staticmethod
     def hex(value):
