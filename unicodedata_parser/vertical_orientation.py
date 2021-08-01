@@ -9,17 +9,21 @@ def dump_vertical_orientation():
     parser = UnicodeDataParser()
     vo = parser.vertical_orientation()
     columns = {
-        'Unicode': lambda code: u_hex(code),
-        'Char': lambda code: chr(code),
-        'vo': lambda code: vo.get(code),
-        'gc': lambda code: unicodedata.category(chr(code)),
-        'eaw': lambda code: unicodedata.east_asian_width(chr(code)),
+        'Unicode': lambda code, ch: u_hex(code),
+        'Char': lambda code, ch: chr(code),
+        'VO': lambda code, ch: vo.get(code),
+        'GC': lambda code, ch: unicodedata.category(ch),
+        'EAW': lambda code, ch: unicodedata.east_asian_width(ch),
+        'cp932': lambda code, ch: u_enc(ch, 'cp932'),
+        'sjis04': lambda code, ch: u_enc(ch, 'sjis_2004'),
+        'cp936': lambda code, ch: u_enc(ch, 'cp936'),
+        'cp949': lambda code, ch: u_enc(ch, 'cp949'),
+        'cp950': lambda code, ch: u_enc(ch, 'cp950'),
     }
-    for name in ('cp932', 'cp936', 'cp949', 'cp950', 'sjis_2004'):
-        columns[name] = lambda code: u_enc(chr(code), name)
     print('\t'.join(key for key in columns.keys()))
     for code in get_unicodes_from_args(vo.keys()):
-        values = (func(code) for func in columns.values())
+        ch = chr(code)
+        values = (func(code, ch) for func in columns.values())
         print('\t'.join(values))
 
 
