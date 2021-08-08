@@ -10,9 +10,7 @@ def dump_encoding():
     parser.add_argument('text', nargs='+')
     args = parser.parse_args()
     # https://docs.python.org/3/library/codecs.html#standard-encodings
-    encs = [
-        'cp932', 'cp936', 'cp949', 'cp950', 'sjis_2004'
-    ]
+    encs = ['cp932', 'cp936', 'cp949', 'cp950', 'sjis_2004']
     header = ['Unicode'] + encs
     print('\t'.join(header))
     for code in to_unicodes(args.text):

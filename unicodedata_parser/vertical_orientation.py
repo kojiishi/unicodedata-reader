@@ -9,7 +9,7 @@ def dump_vertical_orientation():
     parser = UnicodeDataParser()
     vo = parser.vertical_orientation()
     columns = {
-        'Unicode': lambda code, ch: u_hex(code),
+        'Code': lambda code, ch: u_hex(code),
         'Char': lambda code, ch: chr(code),
         'VO': lambda code, ch: vo.get(code),
         'GC': lambda code, ch: unicodedata.category(ch),
