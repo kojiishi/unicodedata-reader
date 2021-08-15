@@ -1,6 +1,7 @@
 import argparse
 import itertools
 import re
+import unicodedata
 
 
 def _to_unicodes_from_str(text):
@@ -30,3 +31,21 @@ def get_unicodes_from_args(default=None):
     if args.text:
         return to_unicodes(args.text)
     return default
+
+
+def u_printable_chr(ch):
+    gc = unicodedata.category(ch)
+    if gc == 'Cc':
+        return ''
+    return ch
+
+
+def print_unicode_table(columns, default=None):
+    print('\t'.join(key for key in columns.keys()))
+    for code in get_unicodes_from_args(default):
+        try:
+            ch = chr(code)
+            values = (func(code, ch) for func in columns.values())
+            print('\t'.join(values))
+        except UnicodeEncodeError:
+            continue

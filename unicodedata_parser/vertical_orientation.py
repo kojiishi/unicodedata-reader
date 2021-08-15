@@ -10,7 +10,7 @@ def dump_vertical_orientation():
     vo = parser.vertical_orientation()
     columns = {
         'Code': lambda code, ch: u_hex(code),
-        'Char': lambda code, ch: chr(code),
+        'Char': lambda code, ch: u_printable_chr(ch),
         'VO': lambda code, ch: vo.get(code),
         'GC': lambda code, ch: unicodedata.category(ch),
         'EAW': lambda code, ch: unicodedata.east_asian_width(ch),
@@ -20,11 +20,7 @@ def dump_vertical_orientation():
         'cp949': lambda code, ch: u_enc(ch, 'cp949'),
         'cp950': lambda code, ch: u_enc(ch, 'cp950'),
     }
-    print('\t'.join(key for key in columns.keys()))
-    for code in get_unicodes_from_args(vo.keys()):
-        ch = chr(code)
-        values = (func(code, ch) for func in columns.values())
-        print('\t'.join(values))
+    print_unicode_table(columns, default=vo.keys())
 
 
 if __name__ == '__main__':
