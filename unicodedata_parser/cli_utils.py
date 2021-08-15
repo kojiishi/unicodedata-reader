@@ -3,6 +3,8 @@ import itertools
 import re
 import unicodedata
 
+from unicodedata_parser import *
+
 
 def _to_unicodes_from_str(text):
     while text:
@@ -40,12 +42,25 @@ def u_printable_chr(ch):
     return ch
 
 
-def print_unicode_table(columns, default=None):
-    print('\t'.join(key for key in columns.keys()))
-    for code in get_unicodes_from_args(default):
-        try:
-            ch = chr(code)
-            values = (func(code, ch) for func in columns.values())
-            print('\t'.join(values))
-        except UnicodeEncodeError:
-            continue
+class UnicodeDataDump(object):
+    def __init__(self, columns=None):
+        self._columns = {
+            'Code': lambda code, ch: u_hex(code),
+            'Char': lambda code, ch: u_printable_chr(ch),
+        }
+        if columns:
+            self.add_columns(columns)
+
+    def add_columns(self, columns):
+        self._columns.update(columns)
+
+    def print(self, default=None):
+        columns = self._columns
+        print('\t'.join(key for key in columns.keys()))
+        for code in get_unicodes_from_args(default):
+            try:
+                ch = chr(code)
+                values = (func(code, ch) for func in columns.values())
+                print('\t'.join(values))
+            except UnicodeEncodeError:
+                continue
