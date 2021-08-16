@@ -17,6 +17,7 @@ def dump_vertical_orientation():
         'cp936': lambda code, ch: u_enc(ch, 'cp936'),
         'cp949': lambda code, ch: u_enc(ch, 'cp949'),
         'cp950': lambda code, ch: u_enc(ch, 'cp950'),
+        'Name': lambda code, ch: u_name_or_empty(ch),
     }
     dump = UnicodeDataDump(columns)
     dump.print(default=vo.keys())

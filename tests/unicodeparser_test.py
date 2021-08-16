@@ -15,7 +15,9 @@ def test_parse_unicode_list():
     assert run('12FE') == (0x12FE, )
     assert run('ABCD') == (0xABCD, )
 
-    assert run('u9') == (0x9, )
+    assert run('12345') == (0x12345, )
+
+    assert run('u0009') == (0x9, )
     assert run('u1234') == (0x1234, )
     assert run('U+1234') == (0x1234, )
 

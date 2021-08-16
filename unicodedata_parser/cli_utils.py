@@ -8,7 +8,7 @@ from unicodedata_parser import *
 
 def _to_unicodes_from_str(text):
     while text:
-        match = re.match(r'([uU]\+?)?([0-9a-fA-F]+),?\s*', text)
+        match = re.match(r'([uU]\+?)?([0-9a-fA-F]{4,5}),?\s*', text)
         if match:
             prefix = match.group(1)
             hex = match.group(2)
@@ -40,6 +40,13 @@ def u_printable_chr(ch):
     if gc == 'Cc':
         return ''
     return ch
+
+
+def u_name_or_empty(ch):
+    try:
+        return unicodedata.name(ch)
+    except ValueError:
+        return ''
 
 
 class UnicodeDataDump(object):

@@ -70,6 +70,9 @@ class UnicodeDataParser(object):
         self.parse_lines(lines, setter, converter=lambda v: EmojiType[v])
         return dict
 
+    def line_break(self):
+        return self.parse('LineBreak')
+
     def scripts(self):
         return self.parse('Scripts')
 
