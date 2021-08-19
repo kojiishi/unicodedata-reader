@@ -79,7 +79,7 @@ pyparsing = ">=2.0.2"
 name = "platformdirs"
 version = "2.2.0"
 description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -203,7 +203,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "e5f3143b88d0e1d0a7858d9defc9feaf2c71c7bb296cd2afd3c3db3cc1adbd6d"
+content-hash = "5dc14a0277bb6f685a56573636eca4c521f287f37277ce913f78ebd10f5f17c7"
 
 [metadata.files]
 atomicwrites = [

@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 import collections
 import enum
+import logging
+import pathlib
 import re
 import urllib.request
+
+_logger = logging.getLogger('UnicodeDataParser')
 
 
 def u_hex(value):
@@ -14,13 +18,6 @@ def u_enc(c, encoding):
     for byte in c.encode(encoding, 'ignore'):
         code = code * 256 + byte
     return u_hex(code) if code else ''
-
-
-def _read_unicode_data_lines(name):
-    url = f'https://www.unicode.org/Public/UNIDATA/{name}.txt'
-    with urllib.request.urlopen(url) as response:
-        body = response.read().decode('utf-8')
-    return body.splitlines()
 
 
 BidiBrackets = collections.namedtuple('BidiBrackets', ['pair', 'type'])
@@ -35,6 +32,37 @@ class EmojiType(enum.Flag):
     Extended_Pictographic = enum.auto()
 
 
+class UnicodeDataReader(object):
+    default = None  # type: UnicodeDataReader
+
+    try:
+        import platformdirs
+        _cache_dir = pathlib.Path(platformdirs.user_cache_dir('UNIDATA'))
+        _logger.debug('cache_dir: %s', _cache_dir)
+    except ModuleNotFoundError:
+        _cache_dir = None
+
+    def readlines(self, name: str):
+        cache = None
+        if UnicodeDataReader._cache_dir:
+            cache = UnicodeDataReader._cache_dir / name
+            if cache.exists():
+                return cache.read_text().splitlines()
+
+        url = f'https://www.unicode.org/Public/UNIDATA/{name}.txt'
+        with urllib.request.urlopen(url) as response:
+            body = response.read().decode('utf-8')
+
+        if cache:
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            cache.write_text(body)
+
+        return body.splitlines()
+
+
+UnicodeDataReader.default = UnicodeDataReader()
+
+
 class UnicodeDataParser(object):
     """Parse [Unicode character database] data files.
 
@@ -46,8 +74,8 @@ class UnicodeDataParser(object):
 
     [Unicode character database]: https://unicode.org/reports/tr44/
     """
-    def __init__(self, read_lines=_read_unicode_data_lines):
-        self._read_lines = read_lines
+    def __init__(self, reader: UnicodeDataReader = None):
+        self._reader = reader
 
     def bidi_brackets(self):
         def convert_bidi_brackets_value(value):
@@ -66,7 +94,7 @@ class UnicodeDataParser(object):
             value |= dict.get(code, EmojiType(0))
             dict[code] = value
 
-        lines = self._read_lines('emoji/emoji-data')
+        lines = self._readlines('emoji/emoji-data')
         self.parse_lines(lines, setter, converter=lambda v: EmojiType[v])
         return dict
 
@@ -83,8 +111,12 @@ class UnicodeDataParser(object):
         return self.parse('VerticalOrientation')
 
     def parse(self, name, converter=None):
-        lines = self._read_lines(name)
+        lines = self._readlines(name)
         return self.dict_from_lines(lines, converter)
+
+    def _readlines(self, name):
+        reader = self._reader or UnicodeDataReader.default
+        return reader.readlines(name)
 
     @staticmethod
     def dict_from_lines(lines, converter=None):
