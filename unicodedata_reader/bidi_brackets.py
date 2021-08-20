@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 import unicodedata
 
-from cli_utils import *
-from unicodedata_parser import *
+from unicodedata_reader import *
 
 
 def dump_bidi_brackets():
-    parser = UnicodeDataParser()
-    blocks = parser.blocks()
-    bidi_brackets = parser.bidi_brackets()
-    scripts = parser.scripts()
-    script_extensions = parser.script_extensions()
+    reader = UnicodeDataReader.default
+    blocks = reader.blocks().to_dict()
+    bidi_brackets = reader.bidi_brackets().to_dict()
+    scripts = reader.scripts().to_dict()
+    script_extensions = reader.script_extensions().to_dict()
 
     def bidi_brackets_type(code):
         bracket = bidi_brackets.get(code)

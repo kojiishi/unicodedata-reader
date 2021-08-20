@@ -3,7 +3,7 @@ import itertools
 import re
 import unicodedata
 
-from unicodedata_parser import *
+from unicodedata_reader import *
 
 
 def _to_unicodes_from_str(text):
@@ -28,7 +28,7 @@ def to_unicodes(text):
 
 def get_unicodes_from_args(default=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('text', nargs='*' if default else '+')
+    parser.add_argument('text', nargs='+' if default is None else '*')
     args = parser.parse_args()
     if args.text:
         return to_unicodes(args.text)

@@ -1,4 +1,4 @@
-from unicodedata_parser import *
+from unicodedata_reader import *
 
 
 def test_hex():

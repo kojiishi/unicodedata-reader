@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
 
-yapf -ir -vv unicodedata_parser tests
+yapf -ir -vv .
 tox -p

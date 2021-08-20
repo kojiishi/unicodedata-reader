@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 import unicodedata
 
-from cli_utils import *
-from unicodedata_parser import *
+from unicodedata_reader import *
 
 
 def dump_vertical_orientation():
-    parser = UnicodeDataParser()
-    vo = parser.vertical_orientation()
+    vo = UnicodeDataReader.default.vertical_orientation().to_dict()
     columns = {
         'VO': lambda code, ch: vo.get(code),
         'GC': lambda code, ch: unicodedata.category(ch),

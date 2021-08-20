@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 import unicodedata
 
-from cli_utils import *
-from unicodedata_parser import *
+from unicodedata_reader import *
 
 
 def dump_line_break():
-    parser = UnicodeDataParser()
-    lb = parser.line_break()
+    lb = UnicodeDataReader.default.line_break().to_dict()
     columns = {
         'LB': lambda code, ch: lb.get(code),
         'GC': lambda code, ch: unicodedata.category(ch),

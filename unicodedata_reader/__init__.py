@@ -1,2 +1,2 @@
-from .parser import *
+from .reader import *
 from .cli_utils import *

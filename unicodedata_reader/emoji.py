@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-from cli_utils import *
-from unicodedata_parser import *
+from unicodedata_reader import *
 
 
 def dump_emoji():
-    parser = UnicodeDataParser()
-    emoji = parser.emoji()
+    emoji = UnicodeDataReader.default.emoji().to_dict()
     for code in get_unicodes_from_args(emoji.keys()):
         values = [u_hex(code), str(emoji.get(code))]
         print('\t'.join(values))
