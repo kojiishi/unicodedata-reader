@@ -3,6 +3,7 @@ import itertools
 import logging
 import pathlib
 import re
+import types
 from typing import Iterable
 from typing import Iterator
 import urllib.request
@@ -47,6 +48,10 @@ class UnicodeDataEntry(object):
         self.max = max
         self.value = value
         self.assert_range()
+
+    def __eq__(self, other):
+        return (self.min == other.min and self.max == other.max
+                and self.value == other.value)
 
     def assert_range(self):
         assert self.max >= self.min
@@ -127,8 +132,22 @@ class UnicodeDataEntries(object):
     def __init__(self, entries: Iterable[UnicodeDataEntry]):
         self._entries = entries
 
+    @staticmethod
+    def from_values(values: Iterator[str]):
+        entries = UnicodeDataEntry.from_values(values)
+        return UnicodeDataEntries(entries)
+
+    def ensure_multi_iterable(self):
+        if isinstance(self._entries, types.GeneratorType):
+            self._entries = tuple(self._entries)
+
     def __iter__(self):
+        self.ensure_multi_iterable()
         return self._entries.__iter__()
+
+    def __len__(self):
+        self.ensure_multi_iterable()
+        return len(self._entries)
 
     def missing_value(self, code: int):
         return None
@@ -136,19 +155,29 @@ class UnicodeDataEntries(object):
     def sort(self):
         self._entries = sorted(self._entries, key=lambda e: e.min)
 
-    def fill_missing_entries(self):
-        values = self.to_values()
+    def normalize(self):
+        values = UnicodeDataEntry.to_values(self._entries, self.missing_value)
         self._entries = UnicodeDataEntry.from_values(values)
 
+    def value(self, code: int):
+        self.ensure_multi_iterable()
+        for entry in self._entries:
+            if code < entry.min:
+                return self.missing_value(code)
+            if code <= entry.max:
+                return entry.value
+
+    def values(self):
+        self.ensure_multi_iterable()
+        return UnicodeDataEntry.to_values(self._entries, self.missing_value)
+
     def to_dict(self):
+        self.ensure_multi_iterable()
         dict = {}
         for entry in self:
             for code in entry.range():
                 dict[code] = entry.value
         return dict
-
-    def to_values(self):
-        return UnicodeDataEntry.to_values(self._entries, self.missing_value)
 
 
 class UnicodeEmojiDataEntries(UnicodeDataEntries):
@@ -181,7 +210,7 @@ class UnicodeLineBreakDataEntries(UnicodeDataEntries):
 
 
 class UnicodeDataReader(object):
-    """Parse [Unicode character database] data files.
+    """Read [Unicode character database] data files.
 
     This class parses data in the [Unicode character database].
 
@@ -194,34 +223,34 @@ class UnicodeDataReader(object):
 
     default = None  # type: UnicodeDataReader
 
-    def bidi_brackets(self):
+    def bidi_brackets(self) -> UnicodeDataEntries:
         entries = self.read_entries('BidiBrackets',
                                     converter=BidiBrackets.from_values)
         return UnicodeDataEntries(entries)
 
-    def blocks(self):
+    def blocks(self) -> UnicodeDataEntries:
         entries = self.read_entries('Blocks')
         return UnicodeDataEntries(entries)
 
-    def emoji(self):
+    def emoji(self) -> UnicodeDataEntries:
         entries = self.read_entries('emoji/emoji-data',
                                     converter=lambda v: EmojiType[v])
         return UnicodeEmojiDataEntries(entries)
 
-    def line_break(self):
+    def line_break(self) -> UnicodeDataEntries:
         entries = self.read_entries('LineBreak')
         return UnicodeLineBreakDataEntries(entries)
 
-    def scripts(self):
+    def scripts(self) -> UnicodeDataEntries:
         entries = self.read_entries('Scripts')
         return UnicodeDataEntries(entries)
 
-    def script_extensions(self):
+    def script_extensions(self) -> UnicodeDataEntries:
         entries = self.read_entries('ScriptExtensions',
                                     converter=lambda v: v.split())
         return UnicodeDataEntries(entries)
 
-    def vertical_orientation(self):
+    def vertical_orientation(self) -> UnicodeDataEntries:
         entries = self.read_entries('VerticalOrientation')
         return UnicodeDataEntries(entries)
 
@@ -229,7 +258,7 @@ class UnicodeDataReader(object):
         lines = self.read_lines(name)
         return UnicodeDataEntry.from_lines(lines, converter=converter)
 
-    def read_lines(self, name: str):
+    def read_lines(self, name: str) -> Iterable[str]:
         url = f'https://www.unicode.org/Public/UNIDATA/{name}.txt'
         with urllib.request.urlopen(url) as response:
             body = response.read().decode('utf-8')
@@ -247,7 +276,7 @@ class UnicodeDataCachedReader(UnicodeDataReader):
     def __init__(self, reader: UnicodeDataReader = UnicodeDataReader()):
         self._reader = reader
 
-    def read_lines(self, name: str):
+    def read_lines(self, name: str) -> Iterable[str]:
         cache_dir = UnicodeDataCachedReader._cache_dir
         if not cache_dir:
             return self._reader.read_lines(name)

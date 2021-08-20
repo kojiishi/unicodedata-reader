@@ -10,13 +10,9 @@ def dump_encoding():
     args = parser.parse_args()
     # https://docs.python.org/3/library/codecs.html#standard-encodings
     encs = ['cp932', 'cp936', 'cp949', 'cp950', 'sjis_2004']
-    header = ['Unicode'] + encs
-    print('\t'.join(header))
-    for code in to_unicodes(args.text):
-        values = [u_hex(code)]
-        ch = chr(code)
-        values.extend(u_enc(ch, enc) for enc in encs)
-        print('\t'.join(values))
+    columns = {enc: lambda code, ch: u_enc(ch, enc) for enc in encs}
+    dump = UnicodeDataDump(columns)
+    dump.print()
 
 
 if __name__ == '__main__':

@@ -4,9 +4,9 @@ from unicodedata_reader import *
 
 def dump_emoji():
     emoji = UnicodeDataReader.default.emoji().to_dict()
-    for code in get_unicodes_from_args(emoji.keys()):
-        values = [u_hex(code), str(emoji.get(code))]
-        print('\t'.join(values))
+    columns = {'Emoji': lambda code, ch: str(emoji.get(code))}
+    dump = UnicodeDataDump(columns)
+    dump.print(default=emoji.keys())
 
 
 if __name__ == '__main__':
