@@ -7,15 +7,21 @@ name = "unicodedata-reader"
 version = "0.1.0"
 description = ""
 authors = ["Koji Ishii <kojii@chromium.org>"]
+readme = "README.md"
+repository = "https://github.com/kojiishi/unicodedata-reader"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8,<3.10"
 platformdirs = "^2.2.0"
 
 [tool.poetry.dev-dependencies]
-yapf = "^0.31.0"
 pytest = "^6.2.4"
+pytype = "*"
 tox = "^3.24.1"
+yapf = "^0.31.0"
 
 [tool.pytest.ini_options]
 testpaths = "tests"
+
+[tool.yapf]
+based_on_style = "pep8"

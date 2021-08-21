@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="u_line_break.js"></script>
+<body>
+  <div>
+    <input id="input" autofocus>
+  </div>
+  <pre id="result"></pre>
+<script>
+input.addEventListener('input', (e) => {
+  text = input.value;
+  results = [];
+  for (let i = 0; i < text.length; ++i) {
+    const code = text.charCodeAt(i);
+    const ch = text[i];
+    results.push(`${ch} U+${code.toString(16)}: ${u_line_break(code)}`);
+  };
+  result.textContent = results.join('\n');
+});
+</script>
+</body>

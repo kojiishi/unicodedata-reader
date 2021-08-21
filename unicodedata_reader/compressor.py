@@ -1,22 +1,18 @@
 #!/usr/bin/env python3
+import argparse
 import base64
-import gzip
+import logging
 import pathlib
-from typing import Iterable
+import sys
 
 from unicodedata_reader import *
 
+_logger = logging.getLogger('UnicodeDataCompressor')
+
 
 class UnicodeDataCompressor(object):
-    def __init__(self):
-        self._value_indices = {}
-
-    def _value_index(self, value: str) -> int:
-        return self._value_indices.setdefault(value, len(self._value_indices))
-
-    @property
-    def _value_bits(self) -> int:
-        value = len(self._value_indices)
+    @staticmethod
+    def _bitsize(value: int) -> int:
         bits = 0
         while value:
             bits += 1
@@ -36,43 +32,61 @@ class UnicodeDataCompressor(object):
         return bytes
 
     def compress(self, entries: UnicodeDataEntries) -> bytearray:
-        # Add all values to `_value_indices` to compute the final `value_bits`.
-        entry_value_list = ((entry, self._value_index(entry.value))
-                            for entry in entries)
-        entry_value_list = tuple(entry_value_list)
-        value_bits = self._value_bits
-
+        value_bits = self._bitsize(len(entries.value_list))
         bytes = bytearray()
-        for entry, value in entry_value_list:
-            assert value < 64
+        for entry in entries:
+            assert isinstance(entry.value, int)
+            assert entry.value < (1 << value_bits)
             assert entry.count > 0
-            combined = ((entry.count - 1) << value_bits) | value
-            print(f'{entry.min:04X} {entry.value}={value}'
-                  f': {entry.count} -> {combined:X}')
+            combined = ((entry.count - 1) << value_bits) | entry.value
+            _logger.debug('%04X %s=%d: %d -> %X', entry.min,
+                          entries.value_list[entry.value], entry.value,
+                          entry.count, combined)
             bytes.extend(self._to_bytes(combined))
         return bytes
 
-    def write_code(self, name: str, base64bytes: bytes):
+    def write_javascript(self, name: str, entries: UnicodeDataEntries):
+        bytes = self.compress(entries)
+        base64bytes = base64.b64encode(bytes)
+        value_list = entries.value_list
+        value_bits = self._bitsize(len(value_list))
+        _logger.info('Bytes=%d, Base64=%d, #values=%d (%d bits)', len(bytes),
+                     len(base64bytes), len(value_list), value_bits)
+
         this_dir = pathlib.Path(__file__).resolve().parent
         js_dir = this_dir.parent / 'js'
         text = (js_dir / 'template.js').read_text()
         text = text.replace('FUNC_NAME', name)
         text = text.replace('BASE64', base64bytes.decode('ascii'))
-        text = text.replace('VALUE_BITS', str(self._value_bits))
+        text = text.replace('VALUE_BITS', str(value_bits))
         output = js_dir / f'{name}.js'
         output.write_text(text)
 
 
-def main():
-    lb = UnicodeDataReader.default.line_break()
-    lb.normalize()
-    compressor = UnicodeDataCompressor()
-    bytes = compressor.compress(lb)
-    base64bytes = base64.b64encode(bytes)
-    print(len(compressor._value_indices), compressor._value_bits, len(bytes),
-          len(gzip.compress(bytes)), len(base64bytes))
+def _init_logging(verbose: int):
+    if verbose <= 1:
+        handler = logging.StreamHandler(sys.stdout)
+        _logger.addHandler(handler)
+        _logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+        return
+    logging.basicConfig(level=logging.DEBUG)
 
-    compressor.write_code('u_line_break', base64bytes)
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v',
+                        '--verbose',
+                        help='increase output verbosity',
+                        action='count',
+                        default=0)
+    args = parser.parse_args()
+    _init_logging(args.verbose)
+
+    entries = UnicodeDataReader.default.line_break()
+    entries.normalize()
+    entries.map_values_to_int()
+    compressor = UnicodeDataCompressor()
+    compressor.write_javascript('u_line_break', entries)
 
 
 if __name__ == '__main__':

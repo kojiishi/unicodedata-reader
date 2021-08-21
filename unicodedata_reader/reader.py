@@ -5,7 +5,8 @@ import pathlib
 import re
 import types
 from typing import Iterable
-from typing import Iterator
+from typing import Sequence
+from typing import Union
 import urllib.request
 
 _logger = logging.getLogger('UnicodeDataParser')
@@ -105,7 +106,7 @@ class UnicodeDataEntry(object):
                 assert False
 
     @staticmethod
-    def from_values(values: Iterator[str]):
+    def from_values(values: Iterable[str]):
         last_value = None
         min = 0
         for code, value in enumerate(values):
@@ -129,11 +130,17 @@ class UnicodeDataEntry(object):
 
 
 class UnicodeDataEntries(object):
-    def __init__(self, entries: Iterable[UnicodeDataEntry]):
+    """Represents a [Unicode character database] file,
+    or a list of `UnicodeDataEntry`.
+    [Unicode character database]: https://unicode.org/reports/tr44/
+    """
+    def __init__(self, entries: Union[Iterable[UnicodeDataEntry],
+                                      Sequence[UnicodeDataEntry]]):
         self._entries = entries
+        self._value_list = None  # type: list
 
     @staticmethod
-    def from_values(values: Iterator[str]):
+    def from_values(values: Iterable[str]):
         entries = UnicodeDataEntry.from_values(values)
         return UnicodeDataEntries(entries)
 
@@ -171,10 +178,34 @@ class UnicodeDataEntries(object):
         self.ensure_multi_iterable()
         return UnicodeDataEntry.to_values(self._entries, self.missing_value)
 
+    @property
+    def value_list(self):
+        return self._value_list
+
+    def map_values_to_int(self):
+        """Map values to integer values.
+
+        The original values must be hashable.
+        They are stored in `self.value_list`.
+        """
+        self.ensure_multi_iterable()
+        value_map = {}
+        for entry in self._entries:
+            assert not isinstance(entry.value, int)
+            entry.value = value_map.setdefault(entry.value, len(value_map))
+
+        value_count = len(value_map)
+        value_list = [None] * value_count
+        for value, index in value_map.items():
+            assert index < value_count
+            assert value_list[index] is None
+            value_list[index] = value
+        self._value_list = value_list
+
     def to_dict(self):
         self.ensure_multi_iterable()
         dict = {}
-        for entry in self:
+        for entry in self._entries:
             for code in entry.range():
                 dict[code] = entry.value
         return dict
@@ -221,7 +252,7 @@ class UnicodeDataReader(object):
     [Unicode character database]: https://unicode.org/reports/tr44/
     """
 
-    default = None  # type: UnicodeDataReader
+    default = None
 
     def bidi_brackets(self) -> UnicodeDataEntries:
         entries = self.read_entries('BidiBrackets',
