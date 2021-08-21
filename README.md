@@ -25,6 +25,16 @@ Please see the [JavaScript] section below.
 ```sh
 pip install unicodedata-reader
 ```
+or to clone and install using [poetry]:
+```sh
+git clone https://github.com/kojiishi/unicodedata-reader
+cd unicodedata-reader
+poetry install
+poetry shell
+```
+
+[poetry]: https://github.com/python-poetry/poetry
+
 
 ## Python Usages
 
