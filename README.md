@@ -39,18 +39,19 @@ poetry shell
 ## Python Usages
 
 ```python
-from unicodedata_reader import UnicodeDataReader
+import unicodedata_reader
 
-lb = UnicodeDataReader.default.line_break()
+reader = unicodedata_reader.UnicodeDataReader.default
+lb = reader.line_break()
 print(lb.value(0x41))
 ```
-The above example prints `AL`.
+The example above prints `AL`.
 Please also see [line_break_test.py] for more usages.
 
 [line_break_test.py]: https://github.com/kojiishi/unicodedata-reader/blob/main/tests/line_break_test.py
 
 ## JavaScript
-[JavaScript]: #JavaScript
+[JavaScript]: #javascript
 
 The [`UnicodeDataCompressor` class] in this package
 can generate JavaScript functions that can read the property values
