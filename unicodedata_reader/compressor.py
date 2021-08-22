@@ -61,9 +61,12 @@ class UnicodeDataCompressor(object):
         value_list = entries.value_list
         value_bits = self._bitsize(len(value_list))
 
-        text = text.replace('FUNC_NAME', name)
+        text = text.replace('PROP_NAME', name)
         text = text.replace('BASE64', base64bytes.decode('ascii'))
         text = text.replace('VALUE_BITS', str(value_bits))
+        text = text.replace('VALUE_MASK', str((1 << value_bits) - 1))
+        text = text.replace('VALUE_LIST',
+                            ','.join(f'"{v}"' for v in value_list))
 
         _logger.info('%s: Bytes=%d, Base64=%d, #values=%d (%d bits)', name,
                      len(bytes), len(base64bytes), len(value_list), value_bits)
@@ -73,7 +76,7 @@ class UnicodeDataCompressor(object):
 def main():
     this_dir = pathlib.Path(__file__).resolve().parent
     parser = argparse.ArgumentParser()
-    parser.add_argument('--name', default='u_line_break')
+    parser.add_argument('--name', default='LineBreak')
     parser.add_argument('--template',
                         type=pathlib.Path,
                         default=this_dir.parent / 'js' / 'template.js')

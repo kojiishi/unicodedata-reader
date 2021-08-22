@@ -58,9 +58,9 @@ The [`UnicodeDataCompressor` class] in this package
 can generate JavaScript functions that can read the property values
 of the [Unicode Character Database] in browsers.
 
-Please see [u_line_break.js] for an example of the generated functions
-and [u_line_break.html] for an example usage.
+Please see [LineBreak.js] for an example of the generated functions
+and [LineBreak.html] for an example usage.
 
 [`UnicodeDataCompressor` class]: https://github.com/kojiishi/unicodedata-reader/blob/main/unicodedata_reader/compressor.py
-[u_line_break.html]: https://github.com/kojiishi/unicodedata-reader/blob/main/js/u_line_break.html
-[u_line_break.js]: https://github.com/kojiishi/unicodedata-reader/blob/main/js/u_line_break.js
+[LineBreak.html]: https://github.com/kojiishi/unicodedata-reader/blob/main/js/LineBreak.html
+[LineBreak.js]: https://github.com/kojiishi/unicodedata-reader/blob/main/js/LineBreak.js

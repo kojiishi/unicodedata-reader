@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<script src="LineBreak.js"></script>
+<body>
+  <div>
+    <input id="input" autofocus>
+  </div>
+  <pre id="result"></pre>
+<script>
+input.addEventListener('input', (e) => {
+  const text = input.value;
+  const results = [];
+  for (const ch of text) {
+    const code = ch.codePointAt(0);
+    results.push(`${ch} U+${code.toString(16)}: ${uLineBreak(code)}`);
+  }
+  result.textContent = results.join('\n');
+});
+</script>
+</body>
