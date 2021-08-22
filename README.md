@@ -14,7 +14,8 @@ this package can read the original data files
 at <https://www.unicode.org/Public/UNIDATA/>.
 
 This package can also generate JavaScript functions
-that can read the proprety values of the [Unicode Character Database].
+that can read the proprety values of the [Unicode Character Database]
+in browsers.
 Please see the [JavaScript] section below.
 
 [Unicode Character Database]: https://unicode.org/reports/tr44/
@@ -55,7 +56,7 @@ Please also see [line_break_test.py] for more usages.
 
 The [`UnicodeDataCompressor` class] in this package
 can generate JavaScript functions that can read the property values
-of the [Unicode Character Database] in the browsers.
+of the [Unicode Character Database] in browsers.
 
 Please see [u_line_break.js] for an example of the generated functions
 and [u_line_break.html] for an example usage.
