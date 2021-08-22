@@ -4,8 +4,6 @@ from unicodedata_reader import *
 # This function tests reading property values using the actual data.
 # Please see `entry_test.py` for tests using test data.
 def test_line_break():
-    lb = UnicodeDataReader.default.line_break()
-
     # Some entries to test from:
     # https://www.unicode.org/Public/UNIDATA/LineBreak.txt
     expects = {
@@ -14,7 +12,10 @@ def test_line_break():
         0x3A: 'IS',
         0x3B: 'IS',
         0x3C: 'AL',
+        0x378: 'XX',  # missing value.
     }
+
+    lb = UnicodeDataReader.default.line_break()
 
     # `value(code)` returns the value for the code point.
     # This is the the most memory-friendly, but slower to read values than other
@@ -32,11 +33,16 @@ def test_line_break():
     # `to_dict()` creates a dict of values, keyed by code points.
     dict = lb.to_dict()
     for code, value_expected in expects.items():
-        assert dict[code] == value_expected
+        value = dict.get(code, lb.missing_value(code))
+        assert value == value_expected
 
-    # Map values to integer values, when doing so is useful, or when using the
-    # same value as JavaScript API.
-    # The `UnicodeDataCompressor` uses the integer values.
+    # Map values to integer values.
+    # Useful when integers are easier to handle, or when the same values as
+    # the JavaScript API are needed because the `UnicodeDataCompressor` uses
+    # the integer values.
+    # Note that missing values are computed that they will not be mapped. Use
+    # `normalize()` to fill entries for missing values.
+    lb.normalize()
     lb.map_values_to_int()
     for code, value_expected in expects.items():
         value = lb.value(code)

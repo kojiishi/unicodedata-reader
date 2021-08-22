@@ -10,6 +10,15 @@ from unicodedata_reader import *
 _logger = logging.getLogger('UnicodeDataCompressor')
 
 
+def _init_logging(verbose: int):
+    if verbose <= 1:
+        handler = logging.StreamHandler(sys.stdout)
+        _logger.addHandler(handler)
+        _logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+        return
+    logging.basicConfig(level=logging.DEBUG)
+
+
 class UnicodeDataCompressor(object):
     @staticmethod
     def _bitsize(value: int) -> int:
@@ -45,35 +54,30 @@ class UnicodeDataCompressor(object):
             bytes.extend(self._to_bytes(combined))
         return bytes
 
-    def write_javascript(self, name: str, entries: UnicodeDataEntries):
+    def replace_variables(self, name: str, entries: UnicodeDataEntries,
+                          text: str) -> str:
         bytes = self.compress(entries)
         base64bytes = base64.b64encode(bytes)
         value_list = entries.value_list
         value_bits = self._bitsize(len(value_list))
-        _logger.info('Bytes=%d, Base64=%d, #values=%d (%d bits)', len(bytes),
-                     len(base64bytes), len(value_list), value_bits)
 
-        this_dir = pathlib.Path(__file__).resolve().parent
-        js_dir = this_dir.parent / 'js'
-        text = (js_dir / 'template.js').read_text()
         text = text.replace('FUNC_NAME', name)
         text = text.replace('BASE64', base64bytes.decode('ascii'))
         text = text.replace('VALUE_BITS', str(value_bits))
-        output = js_dir / f'{name}.js'
-        output.write_text(text)
 
-
-def _init_logging(verbose: int):
-    if verbose <= 1:
-        handler = logging.StreamHandler(sys.stdout)
-        _logger.addHandler(handler)
-        _logger.setLevel(logging.DEBUG if verbose else logging.INFO)
-        return
-    logging.basicConfig(level=logging.DEBUG)
+        _logger.info('%s: Bytes=%d, Base64=%d, #values=%d (%d bits)', name,
+                     len(bytes), len(base64bytes), len(value_list), value_bits)
+        return text
 
 
 def main():
+    this_dir = pathlib.Path(__file__).resolve().parent
     parser = argparse.ArgumentParser()
+    parser.add_argument('--name', default='u_line_break')
+    parser.add_argument('--template',
+                        type=pathlib.Path,
+                        default=this_dir.parent / 'js' / 'template.js')
+    parser.add_argument('-o', '--output')
     parser.add_argument('-v',
                         '--verbose',
                         help='increase output verbosity',
@@ -85,8 +89,25 @@ def main():
     entries = UnicodeDataReader.default.line_break()
     entries.normalize()
     entries.map_values_to_int()
+
+    name = args.name
+    template = args.template
+    text = template.read_text()
     compressor = UnicodeDataCompressor()
-    compressor.write_javascript('u_line_break', entries)
+    text = compressor.replace_variables(name, entries, text)
+
+    output = args.output
+    if output == '-':
+        sys.stdout.write(text)
+    else:
+        if output:
+            output = pathlib.Path(output)
+        else:
+            output = template.parent
+        if output.is_dir():
+            output = output / f'{name}{template.suffix}'
+        output.write_text(text)
+        _logger.info('Saved to %s', output)
 
 
 if __name__ == '__main__':

@@ -83,6 +83,9 @@ class UnicodeDataEntry(object):
     def __str__(self):
         return self.to_str()
 
+    def __repr__(self):
+        return f'UnicodeDataEntry({self.to_str()})'
+
     @staticmethod
     def from_lines(lines: Iterable[str], converter=None):
         for line in lines:
@@ -114,15 +117,15 @@ class UnicodeDataEntry(object):
     @staticmethod
     def from_values(values: Iterable[str]):
         last_value = None
-        min = 0
+        min = -1
         for code, value in enumerate(values):
             if value == last_value:
                 continue
-            if last_value is not None:
+            if min >= 0 and last_value is not None:
                 yield UnicodeDataEntry(min, code - 1, last_value)
             last_value = value
             min = code
-        if last_value is not None:
+        if min >= 0 and last_value is not None:
             yield UnicodeDataEntry(min, code, last_value)
 
     @staticmethod
@@ -179,6 +182,7 @@ class UnicodeDataEntries(object):
                 return self.missing_value(code)
             if code <= entry.max:
                 return entry.value
+        return self.missing_value(code)
 
     def values(self):
         self.ensure_multi_iterable()
@@ -190,6 +194,13 @@ class UnicodeDataEntries(object):
 
     def map_values_to_int(self):
         """Map values to integer values.
+
+        Useful when integers are easier to handle, or when the same values as
+        the JavaScript API are needed because the `UnicodeDataCompressor` uses
+        the integer values.
+
+        Note that missing values are computed that they will not be mapped. Use
+        `normalize()` to fill entries for missing values.
 
         The original values must be hashable.
         They are stored in `self.value_list`.
