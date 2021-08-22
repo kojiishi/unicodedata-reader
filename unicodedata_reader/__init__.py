@@ -1,4 +1,4 @@
 from .entry import *
 from .reader import *
-from .dump import *
+from .cli import *
 from .compressor import *

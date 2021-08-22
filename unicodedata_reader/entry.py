@@ -168,20 +168,16 @@ class UnicodeDataEntries(object):
     def missing_value(self, code: int):
         return None
 
-    def is_sorted(self):
+    def _is_distinct(self):
+        l = self._entries
+        return all(l[i].max < l[i + 1].min for i in range(len(l) - 1))
+
+    def _is_sorted(self):
         l = self._entries
         return all(l[i] <= l[i + 1] for i in range(len(l) - 1))
 
     def sort(self):
         self._entries = sorted(self._entries, key=lambda e: e.min)
-
-    def is_distinct(self):
-        l = self._entries
-        return all(l[i].max < l[i + 1].min for i in range(len(l) - 1))
-
-    def is_normalized(self):
-        l = self._entries
-        return all(l[i].max + 1 == l[i + 1].min for i in range(len(l) - 1))
 
     def normalize(self):
         values = UnicodeDataEntry.to_values(self._entries, self.missing_value)
@@ -215,11 +211,10 @@ class UnicodeDataEntries(object):
         the JavaScript API are needed because the `UnicodeDataCompressor` uses
         the integer values.
 
-        Note that missing values are computed that they will not be mapped. Use
-        `normalize()` to fill entries for missing values.
+        Note that missing values are computed that they will not be mapped. To
+        map them, `normalize()` to fill entries for missing values.
 
-        The original values must be hashable.
-        They are stored in `self.value_list`.
+        On return, the original values are stored in `self.value_list`.
         """
         self.ensure_multi_iterable()
         value_map = {}

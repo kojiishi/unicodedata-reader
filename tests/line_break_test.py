@@ -37,11 +37,18 @@ def test_line_break():
         assert value == value_expected
 
     # Map values to integer values.
-    # Useful when integers are easier to handle, or when the same values as
-    # the JavaScript API are needed because the `UnicodeDataCompressor` uses
-    # the integer values.
-    # Note that missing values are computed that they will not be mapped. Use
-    # `normalize()` to fill entries for missing values.
+    lb.map_values_to_int()
+    for code, value_expected in expects.items():
+        value = lb.value(code)
+        if value == 'XX':
+            # Missing values are computed that they are not mapped.
+            assert value == value_expected
+        else:
+            assert isinstance(value, int)
+            assert lb.value_list[value] == value_expected
+
+    # Use `normalize()` to fill entries for missing values.
+    lb = UnicodeDataReader.default.line_break()
     lb.normalize()
     lb.map_values_to_int()
     for code, value_expected in expects.items():
