@@ -3,8 +3,8 @@ from unicodedata_reader import *
 
 # This function tests reading property values using the actual data.
 # Please see `entry_test.py` for tests using test data.
-def test_line_break():
-    # Some entries to test from:
+def test_line_break_value():
+    # Entries for testing, copied from:
     # https://www.unicode.org/Public/UNIDATA/LineBreak.txt
     expects = {
         0x22: 'QU',
@@ -17,26 +17,28 @@ def test_line_break():
 
     lb = UnicodeDataReader.default.line_break()
 
-    # `value(code)` returns the value for the code point.
+    # There are 3 ways to read values.
+
+    # 1. `value(code)` returns the value for the code point.
     # This is the the most memory-friendly, but slower to read values than other
     # methods.
     for code, value_expected in expects.items():
         assert lb.value(code) == value_expected
 
-    # `values()` returns a list of values in the code point order.
+    # 2. `values()` returns a list of values in the code point order.
     # This creates an item for each Unicode code point (~1M items,) but the
     # fastest way to read values once the tuple was created.
     values = tuple(lb.values())
     for code, value_expected in expects.items():
         assert values[code] == value_expected
 
-    # `to_dict()` creates a dict of values, keyed by code points.
+    # 3. `to_dict()` creates a dict of values, keyed by code points.
     dict = lb.to_dict()
     for code, value_expected in expects.items():
         value = dict.get(code, lb.missing_value(code))
         assert value == value_expected
 
-    # Map values to integer values.
+    # When integer values are easier to handle, `map_values_to_int` can do this.
     lb.map_values_to_int()
     for code, value_expected in expects.items():
         value = lb.value(code)
@@ -48,6 +50,7 @@ def test_line_break():
             assert lb.value_list[value] == value_expected
 
     # Use `normalize()` to fill entries for missing values.
+    # Then missing values are also mapped to integers.
     lb = UnicodeDataReader.default.line_break()
     lb.normalize()
     lb.map_values_to_int()
