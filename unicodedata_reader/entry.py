@@ -168,12 +168,28 @@ class UnicodeDataEntries(object):
     def missing_value(self, code: int):
         return None
 
+    def is_sorted(self):
+        l = self._entries
+        return all(l[i] <= l[i + 1] for i in range(len(l) - 1))
+
     def sort(self):
         self._entries = sorted(self._entries, key=lambda e: e.min)
+
+    def is_distinct(self):
+        l = self._entries
+        return all(l[i].max < l[i + 1].min for i in range(len(l) - 1))
+
+    def is_normalized(self):
+        l = self._entries
+        return all(l[i].max + 1 == l[i + 1].min for i in range(len(l) - 1))
 
     def normalize(self):
         values = UnicodeDataEntry.to_values(self._entries, self.missing_value)
         self._entries = UnicodeDataEntry.from_values(values)
+
+    def unicodes(self):
+        self.ensure_multi_iterable()
+        return itertools.chain(*(e.range() for e in self._entries))
 
     def value(self, code: int):
         self.ensure_multi_iterable()

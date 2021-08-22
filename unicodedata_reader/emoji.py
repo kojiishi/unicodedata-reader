@@ -1,13 +1,24 @@
 #!/usr/bin/env python3
+from typing import Any
+from typing import Callable
+from typing import Dict
+
 from unicodedata_reader import *
 
 
-def dump_emoji():
-    emoji = UnicodeDataReader.default.emoji().to_dict()
-    columns = {'Emoji': lambda code, ch: str(emoji.get(code))}
-    dump = UnicodeDataDump(columns)
-    dump.print(default=emoji.keys())
+class UnicodeEmojiDataCli(UnicodeDataCli):
+    def __init__(self):
+        super().__init__()
+        self.emoji_dict = UnicodeDataReader.default.emoji().to_dict()
+
+    def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
+        return {
+            'Emoji': lambda code, ch: self.emoji_dict.get(code),
+        }
+
+    def _default_unicodes(self):
+        return self.emoji_dict.keys()
 
 
 if __name__ == '__main__':
-    dump_emoji()
+    UnicodeEmojiDataCli().main()

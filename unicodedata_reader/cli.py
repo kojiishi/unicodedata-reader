@@ -1,6 +1,11 @@
 import argparse
 import itertools
 import re
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import Iterable
+from typing import Optional
 import unicodedata
 
 from unicodedata_reader import *
@@ -49,25 +54,47 @@ def u_name_or_empty(ch):
         return ''
 
 
-class UnicodeDataDump(object):
-    def __init__(self, columns=None):
-        self._columns = {
-            'Code': lambda code, ch: u_hex(code),
-            'Char': lambda code, ch: u_printable_chr(ch),
-        }
-        if columns:
-            self.add_columns(columns)
+class UnicodeDataCli(object):
+    def __init__(self):
+        self.text = None
 
-    def add_columns(self, columns):
-        self._columns.update(columns)
+    def _columns(self) -> Dict[str, Callable[[int, str], Any]]:
+        columns = self._core_columns()
+        columns = dict(
+            itertools.chain({
+                'Code': lambda code, ch: u_hex(code),
+                'Char': lambda code, ch: u_printable_chr(ch),
+            }.items(), columns.items(), {
+                'Name': lambda code, ch: u_name_or_empty(ch),
+            }.items()))
+        return columns
 
-    def print(self, default=None):
-        columns = self._columns
+    def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
+        raise NotImplementedError()
+
+    def _unicodes(self) -> Optional[Iterable[int]]:
+        if self.text:
+            return to_unicodes(self.text)
+        return self._default_unicodes()
+
+    def _default_unicodes(self) -> Optional[Iterable[int]]:
+        return None
+
+    def print(self):
+        columns = self._columns()
         print('\t'.join(key for key in columns.keys()))
-        for code in get_unicodes_from_args(default):
+        for code in self._unicodes():
             try:
                 ch = chr(code)
                 values = (func(code, ch) for func in columns.values())
+                values = ('' if v is None else str(v) for v in values)
                 print('\t'.join(values))
             except UnicodeEncodeError:
                 continue
+
+    def main(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            'text', nargs='+' if self._default_unicodes() is None else '*')
+        parser.parse_args(namespace=self)
+        self.print()
