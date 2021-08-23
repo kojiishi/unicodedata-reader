@@ -20,8 +20,17 @@ def _init_logging(verbose: int):
 
 
 class UnicodeDataCompressor(object):
+    def __init__(self, entries: UnicodeDataEntries):
+        self._entries = entries
+
+    @property
+    def _bitsize(self) -> int:
+        values_for_int = self._entries.values_for_int()
+        assert values_for_int
+        return self._bitsize_for(len(values_for_int))
+
     @staticmethod
-    def _bitsize(value: int) -> int:
+    def _bitsize_for(value: int) -> int:
         bits = 0
         while value:
             bits += 1
@@ -40,8 +49,10 @@ class UnicodeDataCompressor(object):
             bytes[i] |= 0x80
         return bytes
 
-    def compress(self, entries: UnicodeDataEntries) -> bytearray:
-        value_bits = self._bitsize(len(entries.value_list))
+    def compress(self) -> bytearray:
+        entries = self._entries
+        assert entries._is_contiguous()
+        value_bits = self._bitsize
         bytes = bytearray()
         for entry in entries:
             assert isinstance(entry.value, int)
@@ -49,27 +60,27 @@ class UnicodeDataCompressor(object):
             assert entry.count > 0
             combined = ((entry.count - 1) << value_bits) | entry.value
             _logger.debug('%04X %s=%d: %d -> %X', entry.min,
-                          entries.value_list[entry.value], entry.value,
+                          entries.values_for_int()[entry.value], entry.value,
                           entry.count, combined)
             bytes.extend(self._to_bytes(combined))
         return bytes
 
-    def replace_variables(self, name: str, entries: UnicodeDataEntries,
-                          text: str) -> str:
-        bytes = self.compress(entries)
+    def replace_variables(self, name: str, text: str) -> str:
+        bytes = self.compress()
         base64bytes = base64.b64encode(bytes)
-        value_list = entries.value_list
-        value_bits = self._bitsize(len(value_list))
+        values_for_int = self._entries.values_for_int()
+        value_bits = self._bitsize
 
         text = text.replace('PROP_NAME', name)
         text = text.replace('BASE64', base64bytes.decode('ascii'))
         text = text.replace('VALUE_BITS', str(value_bits))
         text = text.replace('VALUE_MASK', str((1 << value_bits) - 1))
         text = text.replace('VALUE_LIST',
-                            ','.join(f'"{v}"' for v in value_list))
+                            ','.join(f'"{v}"' for v in values_for_int))
 
         _logger.info('%s: Bytes=%d, Base64=%d, #values=%d (%d bits)', name,
-                     len(bytes), len(base64bytes), len(value_list), value_bits)
+                     len(bytes), len(base64bytes), len(values_for_int),
+                     value_bits)
         return text
 
 
@@ -96,8 +107,8 @@ def main():
     name = args.name
     template = args.template
     text = template.read_text()
-    compressor = UnicodeDataCompressor()
-    text = compressor.replace_variables(name, entries, text)
+    compressor = UnicodeDataCompressor(entries)
+    text = compressor.replace_variables(name, text)
 
     output = args.output
     if output == '-':

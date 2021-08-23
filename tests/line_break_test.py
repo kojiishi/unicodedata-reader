@@ -47,7 +47,7 @@ def test_line_break_value():
             assert value == value_expected
         else:
             assert isinstance(value, int)
-            assert lb.value_list[value] == value_expected
+            assert lb.values_for_int()[value] == value_expected
 
     # Use `normalize()` to fill entries for missing values.
     # Then missing values are also mapped to integers.
@@ -57,4 +57,4 @@ def test_line_break_value():
     for code, value_expected in expects.items():
         value = lb.value(code)
         assert isinstance(value, int)
-        assert lb.value_list[value] == value_expected
+        assert lb.values_for_int()[value] == value_expected

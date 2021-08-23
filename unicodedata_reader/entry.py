@@ -3,6 +3,8 @@ import itertools
 import logging
 import re
 import types
+from typing import Any
+from typing import Dict
 from typing import Iterable
 from typing import Sequence
 from typing import Union
@@ -129,7 +131,7 @@ class UnicodeDataEntry(object):
             yield UnicodeDataEntry(min, code, last_value)
 
     @staticmethod
-    def to_values(entries, missing_value):
+    def to_values(entries, missing_value) -> Iterable[str]:
         next = 0
         for entry in entries:
             if entry.min > next:
@@ -168,13 +170,17 @@ class UnicodeDataEntries(object):
     def missing_value(self, code: int):
         return None
 
+    def _is_contiguous(self):
+        l = self._entries
+        return all(l[i].max + 1 == l[i + 1].min for i in range(len(l) - 1))
+
     def _is_distinct(self):
         l = self._entries
         return all(l[i].max < l[i + 1].min for i in range(len(l) - 1))
 
     def _is_sorted(self):
         l = self._entries
-        return all(l[i] <= l[i + 1] for i in range(len(l) - 1))
+        return all(l[i].min <= l[i + 1].min for i in range(len(l) - 1))
 
     def sort(self):
         self._entries = sorted(self._entries, key=lambda e: e.min)
@@ -183,11 +189,13 @@ class UnicodeDataEntries(object):
         values = UnicodeDataEntry.to_values(self._entries, self.missing_value)
         self._entries = UnicodeDataEntry.from_values(values)
 
-    def unicodes(self):
+    def unicodes(self) -> Iterable[int]:
+        """Returns a list of Unicode code points defined in this entries."""
         self.ensure_multi_iterable()
         return itertools.chain(*(e.range() for e in self._entries))
 
     def value(self, code: int):
+        """Returns the value for the given code point."""
         self.ensure_multi_iterable()
         for entry in self._entries:
             if code < entry.min:
@@ -196,12 +204,21 @@ class UnicodeDataEntries(object):
                 return entry.value
         return self.missing_value(code)
 
-    def values(self):
+    def values(self) -> Iterable[str]:
+        """Returns a list of values in the sequential code point order.
+
+        The list includes missing values,
+        so that `tuple(values())[code]` is equal to `value(code)`.
+        """
         self.ensure_multi_iterable()
         return UnicodeDataEntry.to_values(self._entries, self.missing_value)
 
-    @property
-    def value_list(self):
+    def values_for_int(self):
+        """Returns a list of values in the _integer value_ order.
+
+        Returns `None` if values are not mapped to _integer values_
+        by `map_values_to_int()`.
+        """
         return self._value_list
 
     def map_values_to_int(self):
@@ -216,6 +233,7 @@ class UnicodeDataEntries(object):
 
         On return, the original values are stored in `self.value_list`.
         """
+        assert self.values_for_int() is None
         self.ensure_multi_iterable()
         value_map = {}
         for entry in self._entries:
@@ -230,7 +248,8 @@ class UnicodeDataEntries(object):
             value_list[index] = value
         self._value_list = value_list
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[int, Any]:
+        """Returns a `dict` of values with a Unicode code point as the key."""
         self.ensure_multi_iterable()
         dict = {}
         for entry in self._entries:
