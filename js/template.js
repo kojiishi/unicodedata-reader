@@ -1,5 +1,5 @@
-const uPROP_NAMEV = [VALUE_LIST];
-const uPROP_NAMEI = (function () {
+const uPROP_NAMEValues = [VALUE_LIST];
+const uPROP_NAMEAsInt = (function () {
   const bytes = atob("BASE64");
   const len = bytes.length;
   const entries = []
@@ -24,4 +24,4 @@ const uPROP_NAMEI = (function () {
     }
   }
 })();
-function uPROP_NAME(c) { return uPROP_NAMEV[uPROP_NAMEI(c)]; }
+function uPROP_NAME(c) { return uPROP_NAMEValues[uPROP_NAMEAsInt(c)]; }
