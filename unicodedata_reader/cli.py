@@ -13,15 +13,22 @@ from unicodedata_reader import *
 
 def _to_unicodes_from_str(text):
     while text:
-        match = re.match(r'([uU]\+?)?([0-9a-fA-F]{4,5}),?\s*', text)
+        match = re.match(
+            r'([uU]\+?)?([0-9a-fA-F]{4,5})(-([0-9a-fA-F]{4,5}))?,?\s*', text)
         if match:
             prefix = match.group(1)
             hex = match.group(2)
             if prefix or (len(hex) >= 2 and len(hex) <= 5):
-                yield int(hex, 16)
+                code = int(hex, 16)
+                hex_end = match.group(4)
+                if hex_end:
+                    yield from range(code, int(hex_end, 16) + 1)
+                else:
+                    yield code
                 text = text[match.end():]
                 continue
-        yield ord(text[0])
+        code = ord(text[0])
+        yield code
         text = text[1:]
 
 
