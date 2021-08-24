@@ -25,12 +25,12 @@ def test_line_break_value():
     for code, value_expected in expects.items():
         assert lb.value(code) == value_expected
 
-    # 2. `values()` returns a list of values in the code point order.
+    # 2. `values_for_code()` returns a list of values in the code point order.
     # This creates an item for each Unicode code point (~1M items,) but the
     # fastest way to read values once the tuple was created.
-    values = tuple(lb.values())
+    values_for_code = tuple(lb.values_for_code())
     for code, value_expected in expects.items():
-        assert values[code] == value_expected
+        assert values_for_code[code] == value_expected
 
     # 3. `to_dict()` creates a dict of values, keyed by code points.
     dict = lb.to_dict()

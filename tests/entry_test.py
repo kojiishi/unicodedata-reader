@@ -19,8 +19,8 @@ def test_value():
 
     assert entries.value(code + 1) is None
 
-    values = tuple(entries.values())
-    assert values == expect
+    values_for_code = tuple(entries.values_for_code())
+    assert values_for_code == expect
 
 
 def test_normalie_no_changes():

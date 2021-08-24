@@ -131,7 +131,7 @@ class UnicodeDataEntry(object):
             yield UnicodeDataEntry(min, code, last_value)
 
     @staticmethod
-    def to_values(entries, missing_value) -> Iterable[str]:
+    def to_values_for_code(entries, missing_value) -> Iterable[str]:
         next = 0
         for entry in entries:
             if entry.min > next:
@@ -186,7 +186,8 @@ class UnicodeDataEntries(object):
         self._entries = sorted(self._entries, key=lambda e: e.min)
 
     def normalize(self):
-        values = UnicodeDataEntry.to_values(self._entries, self.missing_value)
+        values = UnicodeDataEntry.to_values_for_code(self._entries,
+                                                     self.missing_value)
         self._entries = UnicodeDataEntry.from_values(values)
 
     def unicodes(self) -> Iterable[int]:
@@ -204,17 +205,18 @@ class UnicodeDataEntries(object):
                 return entry.value
         return self.missing_value(code)
 
-    def values(self) -> Iterable[str]:
-        """Returns a list of values in the sequential code point order.
+    def values_for_code(self) -> Iterable[str]:
+        """Returns a list of values whose index is the Unicode code point.
 
         The list includes missing values,
-        so that `tuple(values())[code]` is equal to `value(code)`.
+        so that `tuple(values_for_code())[code]` is equal to `value(code)`.
         """
         self.ensure_multi_iterable()
-        return UnicodeDataEntry.to_values(self._entries, self.missing_value)
+        return UnicodeDataEntry.to_values_for_code(self._entries,
+                                                   self.missing_value)
 
     def values_for_int(self):
-        """Returns a list of values in the _integer value_ order.
+        """Returns a list of values whose index is the _integer value_.
 
         Returns `None` if values are not mapped to _integer values_
         by `map_values_to_int()`.
