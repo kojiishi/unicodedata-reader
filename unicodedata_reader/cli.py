@@ -73,7 +73,6 @@ def _init_logging(verbose):
 
 class UnicodeDataCli(object):
     def __init__(self):
-        self.text = None
         self.parse_args()
 
     def _columns(self) -> Dict[str, Callable[[int, str], Any]]:

@@ -3,7 +3,9 @@ import argparse
 import base64
 import logging
 import pathlib
+import string
 import sys
+from typing import Optional
 
 from unicodedata_reader import *
 
@@ -65,22 +67,38 @@ class UnicodeDataCompressor(object):
             bytes.extend(self._to_bytes(combined))
         return bytes
 
-    def replace_variables(self, name: str, text: str) -> str:
+    def substitute_template(self,
+                            name: str,
+                            template: pathlib.Path,
+                            output: Optional[pathlib.Path] = None) -> str:
         bytes = self.compress()
         base64bytes = base64.b64encode(bytes)
         values_for_int = self._entries.values_for_int()
         value_bits = self._bitsize
-
-        text = text.replace('PROP_NAME', name)
-        text = text.replace('BASE64', base64bytes.decode('ascii'))
-        text = text.replace('VALUE_BITS', str(value_bits))
-        text = text.replace('VALUE_MASK', str((1 << value_bits) - 1))
-        text = text.replace('VALUE_LIST',
-                            ','.join(f'"{v}"' for v in values_for_int))
-
         _logger.info('%s: Bytes=%d, Base64=%d, #values=%d (%d bits)', name,
                      len(bytes), len(base64bytes), len(values_for_int),
                      value_bits)
+        mapping = {
+            'PROP_NAME': name,
+            'BASE64': base64bytes.decode('ascii'),
+            'VALUE_BITS': str(value_bits),
+            'VALUE_MASK': str((1 << value_bits) - 1),
+            'VALUE_LIST': ','.join(f'"{v}"' for v in values_for_int),
+        }
+
+        text = template.read_text()
+        text = string.Template(text)
+        text = text.substitute(mapping)
+
+        if output:
+            if str(output) == '-':
+                sys.stdout.write(text)
+            else:
+                if output.is_dir():
+                    output = output / f'{name}{template.suffix}'
+                output.write_text(text)
+                _logger.info('Saved to %s', output)
+
         return text
 
 
@@ -91,7 +109,7 @@ def main():
     parser.add_argument('--template',
                         type=pathlib.Path,
                         default=this_dir.parent / 'js' / 'template.js')
-    parser.add_argument('-o', '--output')
+    parser.add_argument('-o', '--output', type=pathlib.Path)
     parser.add_argument('-v',
                         '--verbose',
                         help='increase output verbosity',
@@ -106,22 +124,10 @@ def main():
 
     name = args.name
     template = args.template
-    text = template.read_text()
-    compressor = UnicodeDataCompressor(entries)
-    text = compressor.replace_variables(name, text)
-
     output = args.output
-    if output == '-':
-        sys.stdout.write(text)
-    else:
-        if output:
-            output = pathlib.Path(output)
-        else:
-            output = template.parent
-        if output.is_dir():
-            output = output / f'{name}{template.suffix}'
-        output.write_text(text)
-        _logger.info('Saved to %s', output)
+    compressor = UnicodeDataCompressor(entries)
+    compressor.substitute_template(name, template,
+                                   output if output else template.parent)
 
 
 if __name__ == '__main__':

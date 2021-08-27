@@ -1,6 +1,6 @@
-const uPROP_NAMEValues = [VALUE_LIST];
-const uPROP_NAMEAsInt = (function () {
-  const bytes = atob("BASE64");
+const u${PROP_NAME}Values = [$VALUE_LIST];
+const u${PROP_NAME}AsInt = (function () {
+  const bytes = atob("$BASE64");
   const len = bytes.length;
   const entries = []
   let value = 0;
@@ -12,8 +12,8 @@ const uPROP_NAMEAsInt = (function () {
       continue;
     }
     value |= byte;
-    entries.push((value >> VALUE_BITS) + 1);
-    entries.push(value & VALUE_MASK);
+    entries.push((value >> $VALUE_BITS) + 1);
+    entries.push(value & $VALUE_MASK);
     value = 0;
   }
   return function (c) {
@@ -24,4 +24,4 @@ const uPROP_NAMEAsInt = (function () {
     }
   }
 })();
-function uPROP_NAME(c) { return uPROP_NAMEValues[uPROP_NAMEAsInt(c)]; }
+function u${PROP_NAME}(c) { return u${PROP_NAME}Values[u${PROP_NAME}AsInt(c)]; }
