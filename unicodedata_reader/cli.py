@@ -1,5 +1,6 @@
 import argparse
 import itertools
+import logging
 import re
 from typing import Any
 from typing import Callable
@@ -61,9 +62,19 @@ def u_name_or_empty(ch):
         return ''
 
 
+def _init_logging(verbose):
+    if verbose <= 0:
+        return
+    if verbose <= 1:
+        logging.basicConfig(level=logging.INFO)
+        return
+    logging.basicConfig(level=logging.DEBUG)
+
+
 class UnicodeDataCli(object):
     def __init__(self):
         self.text = None
+        self.parse_args()
 
     def _columns(self) -> Dict[str, Callable[[int, str], Any]]:
         columns = self._core_columns()
@@ -99,9 +110,19 @@ class UnicodeDataCli(object):
             except UnicodeEncodeError:
                 continue
 
-    def main(self):
+    def parse_args(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument(
-            'text', nargs='+' if self._default_unicodes() is None else '*')
+        parser.add_argument('text', nargs='*')
+        parser.add_argument('-f', '--no-cache', action='store_true')
+        parser.add_argument("-v",
+                            "--verbose",
+                            help="increase output verbosity",
+                            action="count",
+                            default=0)
         parser.parse_args(namespace=self)
+        _init_logging(self.verbose)  # pytype: disable=attribute-error
+        if self.no_cache:
+            UnicodeDataReader.is_caching_allowed = False
+
+    def main(self):
         self.print()

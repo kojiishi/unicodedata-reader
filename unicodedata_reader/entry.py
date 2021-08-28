@@ -92,6 +92,7 @@ class UnicodeDataEntry(object):
     def from_lines(lines: Iterable[str], converter=None):
         for line in lines:
             # Skip comments.
+            line = line.rstrip()
             line = re.sub(r'\s*#.*', '', line)
             if not line:
                 continue

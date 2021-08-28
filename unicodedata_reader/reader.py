@@ -21,6 +21,7 @@ class UnicodeDataReader(object):
     """
 
     default = None
+    is_caching_allowed = True
 
     def bidi_brackets(self) -> UnicodeDataEntries:
         entries = self.read_entries('BidiBrackets',
@@ -59,9 +60,10 @@ class UnicodeDataReader(object):
 
     def read_lines(self, name: str) -> Iterable[str]:
         url = f'https://www.unicode.org/Public/UNIDATA/{name}.txt'
+        _logger.debug('Downloading %s', url)
         with urllib.request.urlopen(url) as response:
             body = response.read().decode('utf-8')
-        return body.splitlines()
+        return body.splitlines(keepends=True)
 
 
 class UnicodeDataCachedReader(UnicodeDataReader):
@@ -81,15 +83,15 @@ class UnicodeDataCachedReader(UnicodeDataReader):
             return self._reader.read_lines(name)
 
         cache = UnicodeDataCachedReader._cache_dir / name
-        if cache.exists():
-            return cache.read_text().splitlines()
+        if UnicodeDataCachedReader.is_caching_allowed and cache.exists():
+            _logger.debug('Reading cache %s', cache)
+            return cache.read_text().splitlines(keepends=True)
 
         lines = self._reader.read_lines(name)
 
         cache.parent.mkdir(parents=True, exist_ok=True)
         with cache.open('w') as file:
-            for line in lines:
-                print(line, file=file)
+            file.writelines(lines)
 
         return lines
 
