@@ -11,7 +11,6 @@ class UnicodeGeneralCategoryDataCli(UnicodeDataCli):
     def __init__(self):
         super().__init__()
         self._entries = UnicodeDataReader.default.general_category()
-        self._entries.sort()
 
     def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
         return {

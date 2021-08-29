@@ -50,10 +50,10 @@ def test_line_break_value():
             assert isinstance(value, int)
             assert lb.values_for_int()[value] == value_expected
 
-    # Use `normalize()` to fill entries for missing values.
+    # Use `fill_missing_values()` to fill entries for missing values.
     # Then missing values are also mapped to integers.
     lb = UnicodeDataReader.default.line_break()
-    lb.normalize()
+    lb.fill_missing_values()
     lb.map_values_to_int()
     for code, value_expected in expects.items():
         value = lb.value(code)

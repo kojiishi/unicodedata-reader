@@ -10,6 +10,7 @@ from typing import List
 from typing import Optional
 from typing import Sequence
 from typing import Union
+from typing import Tuple
 
 _logger = logging.getLogger('UnicodeDataEntry')
 
@@ -128,21 +129,27 @@ class UnicodeDataEntry(object):
                 assert False
 
     @staticmethod
-    def from_values(values: Iterable[str]):
+    def from_pairs(values: Iterable[Tuple[int, Any]]):
         last_value = None
         min = -1
-        for code, value in enumerate(values):
-            if value == last_value:
+        last_code = -1
+        for code, value in values:
+            if value == last_value and code == last_code + 1:
+                last_code = code
                 continue
             if min >= 0 and last_value is not None:
-                yield UnicodeDataEntry(min, code - 1, last_value)
+                yield UnicodeDataEntry(min, last_code, last_value)
             last_value = value
-            min = code
+            min = last_code = code
         if min >= 0 and last_value is not None:
             yield UnicodeDataEntry(min, code, last_value)
 
     @staticmethod
-    def values_for_code(entries, missing_value) -> Iterable[str]:
+    def from_values(values: Iterable[Any]):
+        return UnicodeDataEntry.from_pairs(enumerate(values))
+
+    @staticmethod
+    def values_for_code(entries, missing_value) -> Iterable[Any]:
         next = 0
         for entry in entries:
             if entry.min > next:
@@ -169,7 +176,7 @@ class UnicodeDataEntries(object):
         else:
             assert lines is not None
             self._load_lines(lines, converter=converter)
-        self._value_list = None  # type: list
+        self._values_for_int = None  # type: list
 
     def _default_missing_entries(self) -> List[UnicodeDataEntry]:
         return []
@@ -221,7 +228,7 @@ class UnicodeDataEntries(object):
     def sort(self):
         self._entries = sorted(self._entries, key=lambda e: e.min)
 
-    def normalize(self):
+    def fill_missing_values(self):
         values = UnicodeDataEntry.values_for_code(self._entries,
                                                   self.missing_value)
         self._entries = UnicodeDataEntry.from_values(values)
@@ -241,7 +248,7 @@ class UnicodeDataEntries(object):
                 return entry.value
         return self.missing_value(code)
 
-    def values_for_code(self) -> Iterable[str]:
+    def values_for_code(self) -> Iterable[Any]:
         """Returns a list of values whose index is the Unicode code point.
 
         The list includes missing values,
@@ -257,7 +264,7 @@ class UnicodeDataEntries(object):
         Returns `None` if values are not mapped to _integer values_
         by `map_values_to_int()`.
         """
-        return self._value_list
+        return self._values_for_int
 
     def map_values_to_int(self):
         """Map values to integer values.
@@ -267,7 +274,7 @@ class UnicodeDataEntries(object):
         the integer values.
 
         Note that missing values are computed that they will not be mapped. To
-        map them, `normalize()` to fill entries for missing values.
+        map them, `fill_missing_values()` to fill entries for missing values.
 
         On return, the original values are stored in `self.value_list`.
         """
@@ -284,7 +291,7 @@ class UnicodeDataEntries(object):
             assert index < value_count
             assert value_list[index] is None
             value_list[index] = value
-        self._value_list = value_list
+        self._values_for_int = value_list
 
     def to_dict(self) -> Dict[int, Any]:
         """Returns a `dict` of values with a Unicode code point as the key."""
@@ -299,27 +306,31 @@ class UnicodeDataEntries(object):
 class UnicodeBidiBracketsDataEntries(UnicodeDataEntries):
     def _load_lines(self, lines: Iterable[str], converter=None):
         converter = converter or BidiBrackets.from_values
-        return super()._load_lines(lines, converter=converter)
-
-
-class UnicodeScriptExtensionsDataEntries(UnicodeDataEntries):
-    def _load_lines(self, lines: Iterable[str], converter=None):
-        converter = converter or (lambda v: v.split())
-        return super()._load_lines(lines, converter=converter)
+        super()._load_lines(lines, converter=converter)
 
 
 class UnicodeEmojiDataEntries(UnicodeDataEntries):
     def _load_lines(self, lines: Iterable[str], converter=None):
         converter = converter or (lambda v: EmojiType[v])
-        return super()._load_lines(lines, converter=converter)
+        super()._load_lines(lines, converter=converter)
 
-    def to_dict(self):
+        # `emoji-data.txt` has multiple Emoji properties as separate lists.
+        # Unite them to `EmojiType` flags.
         dict = {}
-        for entry in self:
+        for entry in self._entries:
             for code in entry.range():
                 value = dict.get(code, EmojiType(0))
                 dict[code] = value | entry.value
-        return dict
+        items = sorted(dict.items(), key=lambda i: i[0])
+        self._entries = UnicodeDataEntry.from_pairs(items)
+
+    def _load_comment(self, comment: str, start_index: int):
+        # Ignore the special `@missing` line in `emoji-data.txt`:
+        # @missing: 0000..10FFFF  ; Emoji ; No
+        pass
+
+    def missing_value(self, code: int):
+        return EmojiType(0)
 
 
 class UnicodeLineBreakDataEntries(UnicodeDataEntries):
@@ -341,7 +352,13 @@ class UnicodeLineBreakDataEntries(UnicodeDataEntries):
                 self._missing_entries.append(
                     UnicodeDataEntry(min, max, self._current_missing_value))
                 return
-        return super()._load_comment(comment, start_index)
+        super()._load_comment(comment, start_index)
+
+
+class UnicodeScriptExtensionsDataEntries(UnicodeDataEntries):
+    def _load_lines(self, lines: Iterable[str], converter=None):
+        converter = converter or (lambda v: v.split())
+        super()._load_lines(lines, converter=converter)
 
 
 class UnicodeVerticalOrientationDataEntries(UnicodeDataEntries):
@@ -357,4 +374,4 @@ class UnicodeVerticalOrientationDataEntries(UnicodeDataEntries):
                 max = int(max, 16) if max else min
                 self._missing_entries.append(UnicodeDataEntry(min, max, 'U'))
                 return
-        return super()._load_comment(comment, start_index)
+        super()._load_comment(comment, start_index)

@@ -9,15 +9,12 @@ from unicodedata_reader import *
 class UnicodeEmojiDataCli(UnicodeDataCli):
     def __init__(self):
         super().__init__()
-        self.emoji_dict = UnicodeDataReader.default.emoji().to_dict()
+        self._entries = UnicodeDataReader.default.emoji()
 
     def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
         return {
-            'Emoji': lambda code, ch: self.emoji_dict.get(code),
+            'Emoji': lambda code, ch: self._entries.value(code),
         }
-
-    def _default_unicodes(self):
-        return self.emoji_dict.keys()
 
 
 if __name__ == '__main__':

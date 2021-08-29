@@ -122,7 +122,7 @@ def main():
     _init_logging(args.verbose)
 
     entries = UnicodeDataReader.default.line_break()
-    entries.normalize()
+    entries.fill_missing_values()
     entries.map_values_to_int()
 
     template = args.template

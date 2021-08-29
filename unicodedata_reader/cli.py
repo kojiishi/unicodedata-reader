@@ -113,7 +113,7 @@ class UnicodeDataCli(object):
     def substitute_template(self, template: pathlib.Path,
                             output: pathlib.Path):
         entries = self._entries
-        entries.normalize()
+        entries.fill_missing_values()
         entries.map_values_to_int()
         output = output if output else template.parent
         compressor = UnicodeDataCompressor(entries)

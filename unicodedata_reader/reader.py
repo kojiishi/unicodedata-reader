@@ -39,7 +39,10 @@ class UnicodeDataReader(object):
 
     def general_category(self) -> UnicodeDataEntries:
         lines = self.read_lines('extracted/DerivedGeneralCategory')
-        return UnicodeDataEntries(name='GeneralCategory', lines=lines)
+        entries = UnicodeDataEntries(name='GeneralCategory', lines=lines)
+        # `extracted/DerivedGeneralCategory` is not sorted.
+        entries.sort()
+        return entries
 
     def line_break(self) -> UnicodeDataEntries:
         name = 'LineBreak'

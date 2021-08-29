@@ -23,6 +23,24 @@ def test_value():
     assert values_for_code == expect
 
 
+def test_from_pairs():
+    entries = UnicodeDataEntry.from_pairs((
+        (1, 'A'),
+        (2, 'A'),
+        (3, 'B'),
+        (4, 'B'),
+        (6, 'C'),
+        (8, 'C'),
+        (9, 'C'),
+        (11, 'C'),
+    ))
+    entries = tuple(entries)
+    expects = (UnicodeDataEntry(1, 2, 'A'), UnicodeDataEntry(3, 4, 'B'),
+               UnicodeDataEntry(6, 6, 'C'), UnicodeDataEntry(8, 9, 'C'),
+               UnicodeDataEntry(11, 11, 'C'))
+    assert entries == expects
+
+
 def test_missing_directive():
     lines = [
         '# test\n',
@@ -80,11 +98,11 @@ def test_normalie_no_changes():
         UnicodeDataEntry(5, 6, 'B'),
     ))
     nomalized_entries = UnicodeDataEntries(entries=entries)
-    nomalized_entries.normalize()
+    nomalized_entries.fill_missing_values()
     assert tuple(entries) == tuple(nomalized_entries)
 
 
-def test_normalize_fill_missing_entries_override():
+def test_fill_missing_values():
     class TestEntries(UnicodeDataEntries):
         def missing_value(self, code: int):
             return 'B'
@@ -93,7 +111,7 @@ def test_normalize_fill_missing_entries_override():
         UnicodeDataEntry(0, 10, 'A'),
         UnicodeDataEntry(12, 20, 'B'),
     ))
-    entries.normalize()
+    entries.fill_missing_values()
     assert len(entries) == 2
     assert entries._entries == (UnicodeDataEntry(0, 10, 'A'),
                                 UnicodeDataEntry(11, 20, 'B'))
