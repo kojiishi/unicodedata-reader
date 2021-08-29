@@ -29,7 +29,7 @@ class UnicodeDataCompressor(object):
     def _bitsize(self) -> int:
         values_for_int = self._entries.values_for_int()
         assert values_for_int
-        return self._bitsize_for(len(values_for_int))
+        return self._bitsize_for(len(values_for_int) - 1)
 
     @staticmethod
     def _bitsize_for(value: int) -> int:
@@ -68,13 +68,16 @@ class UnicodeDataCompressor(object):
         return bytes
 
     def substitute_template(self,
-                            name: str,
                             template: pathlib.Path,
-                            output: Optional[pathlib.Path] = None) -> str:
+                            output: Optional[pathlib.Path] = None,
+                            name: Optional[str] = None) -> str:
+        entries = self._entries
         bytes = self.compress()
         base64bytes = base64.b64encode(bytes)
-        values_for_int = self._entries.values_for_int()
+        values_for_int = entries.values_for_int()
         value_bits = self._bitsize
+        name = name or entries.name
+        assert name
         _logger.info('%s: Bytes=%d, Base64=%d, #values=%d (%d bits)', name,
                      len(bytes), len(base64bytes), len(values_for_int),
                      value_bits)
@@ -122,12 +125,11 @@ def main():
     entries.normalize()
     entries.map_values_to_int()
 
-    name = args.name
     template = args.template
     output = args.output
     compressor = UnicodeDataCompressor(entries)
-    compressor.substitute_template(name, template,
-                                   output if output else template.parent)
+    compressor.substitute_template(
+        template, output=output if output else template.parent, name=args.name)
 
 
 if __name__ == '__main__':

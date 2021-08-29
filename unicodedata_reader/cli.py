@@ -1,6 +1,7 @@
 import argparse
 import itertools
 import logging
+import pathlib
 import re
 from typing import Any
 from typing import Callable
@@ -95,7 +96,7 @@ class UnicodeDataCli(object):
         return self._default_unicodes()
 
     def _default_unicodes(self) -> Optional[Iterable[int]]:
-        return None
+        return self._entries.unicodes()
 
     def print(self):
         columns = self._columns()
@@ -109,10 +110,22 @@ class UnicodeDataCli(object):
             except UnicodeEncodeError:
                 continue
 
+    def substitute_template(self, template: pathlib.Path,
+                            output: pathlib.Path):
+        entries = self._entries
+        entries.normalize()
+        entries.map_values_to_int()
+        output = output if output else template.parent
+        compressor = UnicodeDataCompressor(entries)
+        compressor.substitute_template(template, name=self.name, output=output)
+
     def parse_args(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('text', nargs='*')
         parser.add_argument('-f', '--no-cache', action='store_true')
+        parser.add_argument('-n', '--name')
+        parser.add_argument('-t', '--template', type=pathlib.Path)
+        parser.add_argument('-o', '--output', type=pathlib.Path)
         parser.add_argument("-v",
                             "--verbose",
                             help="increase output verbosity",
@@ -124,4 +137,7 @@ class UnicodeDataCli(object):
             UnicodeDataReader.is_caching_allowed = False
 
     def main(self):
+        if self.template:
+            self.substitute_template(self.template, self.output)
+            return
         self.print()

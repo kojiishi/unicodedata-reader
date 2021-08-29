@@ -21,6 +21,9 @@ pytype = "*"
 tox = "^3.24.3"
 yapf = "^0.31.0"
 
+[tool.poetry.scripts]
+unicodedata-reader = 'unicodedata_reader.__main__:main'
+
 [tool.pytest.ini_options]
 testpaths = "tests"
 
