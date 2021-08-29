@@ -9,7 +9,7 @@ def test_entry_eq():
 
 
 def test_value():
-    entries = UnicodeDataEntries((
+    entries = UnicodeDataEntries(entries=(
         UnicodeDataEntry(1, 3, 'A'),
         UnicodeDataEntry(5, 6, 'B'),
     ))
@@ -23,12 +23,63 @@ def test_value():
     assert values_for_code == expect
 
 
+def test_missing_directive():
+    lines = [
+        '# test\n',
+        '# @missing: 0000..10FFFF; R\n',
+        '0000..001F     ; R\n',
+        '3000           ; U\n',
+    ]
+    entries = UnicodeDataEntries(lines=lines)
+    entries.ensure_multi_iterable()
+    assert entries.value(0x001F) == 'R'
+    assert entries.value(0x2FFF) == 'R'
+    assert entries.value(0x3000) == 'U'
+    assert entries.value(0x3001) == 'R'
+    assert entries._missing_entries[0] == UnicodeDataEntry(0, 0x10FFFF, 'R')
+
+
+def test_missing_directive_lb():
+    lines = [
+        '# test\n',
+        '#  - The unassigned code points in the following blocks default to "ID":\n',
+        '#         CJK Unified Ideographs Extension A: U+3400..U+4DBF\n',
+        '#  - The unassigned code points in the following block default to "PR":\n',
+        '#         Currency Symbols:                   U+20A0..U+20CF\n',
+        '# @missing: 0000..10FFFF; XX\n',
+    ]
+    entries = UnicodeLineBreakDataEntries(lines=lines)
+    entries.ensure_multi_iterable()
+    assert entries.value(0x33FF) == 'XX'
+    for code in range(0x3400, 0x4DC0):
+        assert entries.value(code) == 'ID'
+    assert entries.value(0x4DC0) == 'XX'
+    assert entries.value(0x209F) == 'XX'
+    for code in range(0x20A0, 0x20D0):
+        assert entries.value(code) == 'PR'
+    assert entries.value(0x20D0) == 'XX'
+
+
+def test_missing_directive_vo():
+    lines = [
+        '# test\n',
+        '#         Control Pictures & OCR              U+2400..U+245F\n',
+        '# @missing: 0000..10FFFF; R\n',
+    ]
+    entries = UnicodeVerticalOrientationDataEntries(lines=lines)
+    entries.ensure_multi_iterable()
+    assert entries.value(0x23FF) == 'R'
+    for code in range(0x2400, 0x2460):
+        assert entries.value(code) == 'U'
+    assert entries.value(0x2460) == 'R'
+
+
 def test_normalie_no_changes():
-    entries = UnicodeDataEntries((
+    entries = UnicodeDataEntries(entries=(
         UnicodeDataEntry(1, 3, 'A'),
         UnicodeDataEntry(5, 6, 'B'),
     ))
-    nomalized_entries = UnicodeDataEntries(entries)
+    nomalized_entries = UnicodeDataEntries(entries=entries)
     nomalized_entries.normalize()
     assert tuple(entries) == tuple(nomalized_entries)
 
@@ -38,7 +89,7 @@ def test_normalize_fill_missing_entries_override():
         def missing_value(self, code: int):
             return 'B'
 
-    entries = TestEntries((
+    entries = TestEntries(entries=(
         UnicodeDataEntry(0, 10, 'A'),
         UnicodeDataEntry(12, 20, 'B'),
     ))

@@ -24,39 +24,38 @@ class UnicodeDataReader(object):
     is_caching_allowed = True
 
     def bidi_brackets(self) -> UnicodeDataEntries:
-        entries = self.read_entries('BidiBrackets',
-                                    converter=BidiBrackets.from_values)
-        return UnicodeDataEntries(entries)
+        name = 'BidiBrackets'
+        lines = self.read_lines(name)
+        return UnicodeBidiBracketsDataEntries(name=name, lines=lines)
 
     def blocks(self) -> UnicodeDataEntries:
-        entries = self.read_entries('Blocks')
-        return UnicodeDataEntries(entries)
+        name = 'Blocks'
+        lines = self.read_lines(name)
+        return UnicodeDataEntries(name=name, lines=lines)
 
     def emoji(self) -> UnicodeDataEntries:
-        entries = self.read_entries('emoji/emoji-data',
-                                    converter=lambda v: EmojiType[v])
-        return UnicodeEmojiDataEntries(entries)
+        lines = self.read_lines('emoji/emoji-data')
+        return UnicodeEmojiDataEntries(name='Emoji', lines=lines)
 
     def line_break(self) -> UnicodeDataEntries:
-        entries = self.read_entries('LineBreak')
-        return UnicodeLineBreakDataEntries(entries)
+        name = 'LineBreak'
+        lines = self.read_lines(name)
+        return UnicodeLineBreakDataEntries(name=name, lines=lines)
 
     def scripts(self) -> UnicodeDataEntries:
-        entries = self.read_entries('Scripts')
-        return UnicodeDataEntries(entries)
+        name = 'Scripts'
+        lines = self.read_lines(name)
+        return UnicodeDataEntries(name=name, lines=lines)
 
     def script_extensions(self) -> UnicodeDataEntries:
-        entries = self.read_entries('ScriptExtensions',
-                                    converter=lambda v: v.split())
-        return UnicodeDataEntries(entries)
+        name = 'ScriptExtensions'
+        lines = self.read_lines(name)
+        return UnicodeScriptExtensionsDataEntries(name=name, lines=lines)
 
     def vertical_orientation(self) -> UnicodeDataEntries:
-        entries = self.read_entries('VerticalOrientation')
-        return UnicodeDataEntries(entries)
-
-    def read_entries(self, name: str, converter=None):
+        name = 'VerticalOrientation'
         lines = self.read_lines(name)
-        return UnicodeDataEntry.from_lines(lines, converter=converter)
+        return UnicodeVerticalOrientationDataEntries(name=name, lines=lines)
 
     def read_lines(self, name: str) -> Iterable[str]:
         url = f'https://www.unicode.org/Public/UNIDATA/{name}.txt'
@@ -91,6 +90,7 @@ class UnicodeDataCachedReader(UnicodeDataReader):
 
         cache.parent.mkdir(parents=True, exist_ok=True)
         with cache.open('w') as file:
+            _logger.debug('Writing cache %s', cache)
             file.writelines(lines)
 
         return lines

@@ -1,3 +1,4 @@
+from unicodedata_reader.reader import UnicodeDataReader
 from unicodedata_reader import *
 
 
