@@ -37,6 +37,10 @@ class UnicodeDataReader(object):
         lines = self.read_lines('emoji/emoji-data')
         return UnicodeEmojiDataEntries(name='Emoji', lines=lines)
 
+    def general_category(self) -> UnicodeDataEntries:
+        lines = self.read_lines('extracted/DerivedGeneralCategory')
+        return UnicodeDataEntries(name='GeneralCategory', lines=lines)
+
     def line_break(self) -> UnicodeDataEntries:
         name = 'LineBreak'
         lines = self.read_lines(name)

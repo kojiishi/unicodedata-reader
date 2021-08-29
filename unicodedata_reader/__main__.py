@@ -3,6 +3,7 @@ import sys
 
 import unicodedata_reader.bidi_brackets as bidi_brackets
 import unicodedata_reader.emoji as emoji
+import unicodedata_reader.general_category as gc
 import unicodedata_reader.line_break as lb
 import unicodedata_reader.vertical_orientation as vo
 
@@ -12,6 +13,7 @@ def main():
     sub_commands = {
         'bidi': lambda: bidi_brackets.dump_bidi_brackets(),
         'emoji': lambda: emoji.UnicodeEmojiDataCli().main(),
+        'gc': lambda: gc.UnicodeGeneralCategoryDataCli().main(),
         'lb': lambda: lb.UnicodeLineBreakDataCli().main(),
         'vo': lambda: vo.UnicodeVerticalOrientationDataCli().main(),
     }
