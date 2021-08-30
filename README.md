@@ -65,6 +65,12 @@ of the [Unicode Character Database] in browsers.
 Please see [LineBreak.js] for an example of the generated functions
 and [LineBreak.html] for an example usage.
 
+The following command generates a JavaScript file for the [Line_Break property]
+using `js/template.js` as the template file:
+```sh
+unicodedata-reader lb -t js/template.js
+```
+
 [`UnicodeDataCompressor` class]: https://github.com/kojiishi/unicodedata-reader/blob/main/unicodedata_reader/compressor.py
 [LineBreak.html]: https://github.com/kojiishi/unicodedata-reader/blob/main/js/LineBreak.html
 [LineBreak.js]: https://github.com/kojiishi/unicodedata-reader/blob/main/js/LineBreak.js

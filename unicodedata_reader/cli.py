@@ -74,7 +74,7 @@ def _init_logging(verbose):
 
 class UnicodeDataCli(object):
     def __init__(self):
-        self.parse_args()
+        self._parse_args()
 
     def _columns(self) -> Dict[str, Callable[[int, str], Any]]:
         columns = self._core_columns()
@@ -119,17 +119,22 @@ class UnicodeDataCli(object):
         compressor = UnicodeDataCompressor(entries)
         compressor.substitute_template(template, name=self.name, output=output)
 
-    def parse_args(self):
+    def _parse_args(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('text', nargs='*')
+        parser.add_argument('text',
+                            nargs='*',
+                            help='show properties for the text')
         parser.add_argument('-f', '--no-cache', action='store_true')
-        parser.add_argument('-n', '--name')
-        parser.add_argument('-t', '--template', type=pathlib.Path)
+        parser.add_argument('--name', help='$NAME in the template')
+        parser.add_argument('-t',
+                            '--template',
+                            type=pathlib.Path,
+                            help='generate a file from the template')
         parser.add_argument('-o', '--output', type=pathlib.Path)
-        parser.add_argument("-v",
-                            "--verbose",
-                            help="increase output verbosity",
-                            action="count",
+        parser.add_argument('-v',
+                            '--verbose',
+                            help='increase output verbosity',
+                            action='count',
                             default=0)
         parser.parse_args(namespace=self)
         _init_logging(self.verbose)  # pytype: disable=attribute-error

@@ -1,14 +1,12 @@
-const u${PROP_NAME}Values = [$VALUE_LIST];
-const u${PROP_NAME}AsInt = (function () {
-  const bytes = atob("$BASE64");
+const u${NAME}AsInt = (function () {
+  const bytes = atob("$BASE64BYTES");
   const len = bytes.length;
   const entries = []
   let value = 0;
   for (let i = 0; i < len; ++i) {
     const byte = bytes.charCodeAt(i);
     if (byte & 0x80) {
-      value |= byte & 0x7F;
-      value <<= 7;
+      value = (value | (byte & 0x7F)) << 7;
       continue;
     }
     value |= byte;
@@ -24,4 +22,5 @@ const u${PROP_NAME}AsInt = (function () {
     }
   }
 })();
-function u${PROP_NAME}(c) { return u${PROP_NAME}Values[u${PROP_NAME}AsInt(c)]; }
+const u${NAME}Values = [$VALUE_LIST];
+function u${NAME}(c) { return u${NAME}Values[u${NAME}AsInt(c)]; }

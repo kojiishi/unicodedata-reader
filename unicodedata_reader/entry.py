@@ -171,12 +171,13 @@ class UnicodeDataEntries(object):
                  converter=None):
         self._missing_entries = self._default_missing_entries()
         self.name = name
+        self._values_for_int = None  # type: list
+
         if entries is not None:
             self._entries = entries
         else:
             assert lines is not None
             self._load_lines(lines, converter=converter)
-        self._values_for_int = None  # type: list
 
     def _default_missing_entries(self) -> List[UnicodeDataEntry]:
         return []
@@ -193,16 +194,16 @@ class UnicodeDataEntries(object):
             self._missing_entries.extend(entries)
             assert self._missing_entries
 
-    def ensure_multi_iterable(self):
+    def _ensure_multi_iterable(self):
         if isinstance(self._entries, types.GeneratorType):
             self._entries = tuple(self._entries)
 
     def __iter__(self):
-        self.ensure_multi_iterable()
+        self._ensure_multi_iterable()
         return self._entries.__iter__()
 
     def __len__(self):
-        self.ensure_multi_iterable()
+        self._ensure_multi_iterable()
         return len(self._entries)
 
     def missing_value(self, code: int):
@@ -235,12 +236,12 @@ class UnicodeDataEntries(object):
 
     def unicodes(self) -> Iterable[int]:
         """Returns a list of Unicode code points defined in this entries."""
-        self.ensure_multi_iterable()
+        self._ensure_multi_iterable()
         return itertools.chain(*(e.range() for e in self._entries))
 
     def value(self, code: int):
         """Returns the value for the given code point."""
-        self.ensure_multi_iterable()
+        self._ensure_multi_iterable()
         for entry in self._entries:
             if code < entry.min:
                 return self.missing_value(code)
@@ -254,7 +255,7 @@ class UnicodeDataEntries(object):
         The list includes missing values,
         so that `tuple(values_for_code())[code]` is equal to `value(code)`.
         """
-        self.ensure_multi_iterable()
+        self._ensure_multi_iterable()
         return UnicodeDataEntry.values_for_code(self._entries,
                                                 self.missing_value)
 
@@ -278,8 +279,8 @@ class UnicodeDataEntries(object):
 
         On return, the original values are stored in `self.value_list`.
         """
-        assert self.values_for_int() is None
-        self.ensure_multi_iterable()
+        assert self._values_for_int is None
+        self._ensure_multi_iterable()
         value_map = {}
         for entry in self._entries:
             assert not isinstance(entry.value, int)
@@ -295,7 +296,7 @@ class UnicodeDataEntries(object):
 
     def to_dict(self) -> Dict[int, Any]:
         """Returns a `dict` of values with a Unicode code point as the key."""
-        self.ensure_multi_iterable()
+        self._ensure_multi_iterable()
         dict = {}
         for entry in self._entries:
             for code in entry.range():

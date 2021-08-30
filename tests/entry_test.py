@@ -49,7 +49,6 @@ def test_missing_directive():
         '3000           ; U\n',
     ]
     entries = UnicodeDataEntries(lines=lines)
-    entries.ensure_multi_iterable()
     assert entries.value(0x001F) == 'R'
     assert entries.value(0x2FFF) == 'R'
     assert entries.value(0x3000) == 'U'
@@ -67,7 +66,6 @@ def test_missing_directive_lb():
         '# @missing: 0000..10FFFF; XX\n',
     ]
     entries = UnicodeLineBreakDataEntries(lines=lines)
-    entries.ensure_multi_iterable()
     assert entries.value(0x33FF) == 'XX'
     for code in range(0x3400, 0x4DC0):
         assert entries.value(code) == 'ID'
@@ -85,7 +83,6 @@ def test_missing_directive_vo():
         '# @missing: 0000..10FFFF; R\n',
     ]
     entries = UnicodeVerticalOrientationDataEntries(lines=lines)
-    entries.ensure_multi_iterable()
     assert entries.value(0x23FF) == 'R'
     for code in range(0x2400, 0x2460):
         assert entries.value(code) == 'U'

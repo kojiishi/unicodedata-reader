@@ -82,8 +82,8 @@ class UnicodeDataCompressor(object):
                      len(bytes), len(base64bytes), len(values_for_int),
                      value_bits)
         mapping = {
-            'PROP_NAME': name,
-            'BASE64': base64bytes.decode('ascii'),
+            'NAME': name,
+            'BASE64BYTES': base64bytes.decode('ascii'),
             'VALUE_BITS': str(value_bits),
             'VALUE_MASK': str((1 << value_bits) - 1),
             'VALUE_LIST': ','.join(f'"{v}"' for v in values_for_int),
