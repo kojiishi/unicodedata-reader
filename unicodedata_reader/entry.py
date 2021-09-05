@@ -134,19 +134,22 @@ class UnicodeDataEntry(object):
         min = -1
         last_code = -1
         for code, value in values:
+            assert code > last_code
             if value == last_value and code == last_code + 1:
                 last_code = code
                 continue
-            if min >= 0 and last_value is not None:
+            if min >= 0:
                 yield UnicodeDataEntry(min, last_code, last_value)
             last_value = value
             min = last_code = code
-        if min >= 0 and last_value is not None:
+        if min >= 0:
             yield UnicodeDataEntry(min, code, last_value)
 
     @staticmethod
     def from_values(values: Iterable[Any]):
-        return UnicodeDataEntry.from_pairs(enumerate(values))
+        pairs = enumerate(values)
+        pairs = (p for p in pairs if p[1] is not None)
+        return UnicodeDataEntry.from_pairs(pairs)
 
     @staticmethod
     def values_for_code(entries, missing_value) -> Iterable[Any]:
@@ -174,6 +177,8 @@ class UnicodeDataEntries(object):
         self._values_for_int = None  # type: list
 
         if entries is not None:
+            assert lines is None
+            assert converter is None
             self._entries = entries
         else:
             assert lines is not None

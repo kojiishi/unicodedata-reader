@@ -1,3 +1,5 @@
+import pytest
+
 from unicodedata_reader import *
 
 
@@ -6,21 +8,6 @@ def test_entry_eq():
     assert UnicodeDataEntry(1, 3, 'A') != UnicodeDataEntry(1, 3, 'B')
     assert UnicodeDataEntry(1, 3, 'A') != UnicodeDataEntry(2, 3, 'A')
     assert UnicodeDataEntry(1, 3, 'A') != UnicodeDataEntry(1, 2, 'A')
-
-
-def test_value():
-    entries = UnicodeDataEntries(entries=(
-        UnicodeDataEntry(1, 3, 'A'),
-        UnicodeDataEntry(5, 6, 'B'),
-    ))
-    expect = (None, 'A', 'A', 'A', None, 'B', 'B')
-    for code, value in enumerate(expect):
-        assert entries.value(code) == value
-
-    assert entries.value(code + 1) is None
-
-    values_for_code = tuple(entries.values_for_code())
-    assert values_for_code == expect
 
 
 def test_from_pairs():
@@ -39,6 +26,55 @@ def test_from_pairs():
                UnicodeDataEntry(6, 6, 'C'), UnicodeDataEntry(8, 9, 'C'),
                UnicodeDataEntry(11, 11, 'C'))
     assert entries == expects
+
+
+def test_from_pairs_unsorted():
+    entries = UnicodeDataEntry.from_pairs((
+        (1, 'A'),
+        (3, 'A'),
+        (2, 'A'),
+    ))
+    with pytest.raises(AssertionError):
+        entries = tuple(entries)
+
+
+def test_from_pairs_none():
+    entries = UnicodeDataEntry.from_pairs((
+        (1, None),
+        (2, 'A'),
+        (3, 'A'),
+        (5, None),
+        (7, 'A'),
+        (9, None),
+    ))
+    entries = tuple(entries)
+    expects = (UnicodeDataEntry(1, 1, None), UnicodeDataEntry(2, 3, 'A'),
+               UnicodeDataEntry(5, 5, None), UnicodeDataEntry(7, 7, 'A'),
+               UnicodeDataEntry(9, 9, None))
+    assert entries == expects
+
+
+def test_from_values_none():
+    entries = UnicodeDataEntry.from_values((None, 'A', None, 'A', None, 'B'))
+    entries = tuple(entries)
+    expects = (UnicodeDataEntry(1, 1, 'A'), UnicodeDataEntry(3, 3, 'A'),
+               UnicodeDataEntry(5, 5, 'B'))
+    assert entries == expects
+
+
+def test_value():
+    entries = UnicodeDataEntries(entries=(
+        UnicodeDataEntry(1, 3, 'A'),
+        UnicodeDataEntry(5, 6, 'B'),
+    ))
+    expect = (None, 'A', 'A', 'A', None, 'B', 'B')
+    for code, value in enumerate(expect):
+        assert entries.value(code) == value
+
+    assert entries.value(code + 1) is None
+
+    values_for_code = tuple(entries.values_for_code())
+    assert values_for_code == expect
 
 
 def test_missing_directive():
