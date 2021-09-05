@@ -19,6 +19,7 @@ that can read the property values of the [Unicode Character Database]
 in browsers.
 Please see the [JavaScript] section below.
 
+[General_Category property]: http://unicode.org/reports/tr44/#General_Category
 [Line_Break property]: http://unicode.org/reports/tr44/#Line_Break
 [Unicode Character Database]: https://unicode.org/reports/tr44/
 [unicodedata]: https://docs.python.org/3/library/unicodedata.html
@@ -62,8 +63,12 @@ The [`UnicodeDataCompressor` class] in this package
 can generate JavaScript functions that can read the property values
 of the [Unicode Character Database] in browsers.
 
-Please see [LineBreak.js] for an example of the generated functions
-and [LineBreak.html] for an example usage.
+Following examples are available in the "`js`" directory:
+* [GeneralCategory.js] is a generated JavaScript file
+  for the Unicode [General_Category property].
+* [LineBreak.js] is a generated JavaScript file
+  for the Unicode [Line_Break property].
+* [LineBreak.html] for an example usage of [LineBreak.js].
 
 The following command generates a JavaScript file for the [Line_Break property]
 using `js/template.js` as the template file:
@@ -72,5 +77,6 @@ unicodedata-reader lb -t js/template.js
 ```
 
 [`UnicodeDataCompressor` class]: https://github.com/kojiishi/unicodedata-reader/blob/main/unicodedata_reader/compressor.py
+[GeneralCategory.js]: https://github.com/kojiishi/unicodedata-reader/blob/main/js/GeneralCategory.js
 [LineBreak.html]: https://github.com/kojiishi/unicodedata-reader/blob/main/js/LineBreak.html
 [LineBreak.js]: https://github.com/kojiishi/unicodedata-reader/blob/main/js/LineBreak.js
