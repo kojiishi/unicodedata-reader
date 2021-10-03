@@ -80,7 +80,7 @@ class UnicodeDataCli(object):
         columns = self._core_columns()
         columns = dict(
             itertools.chain({
-                'Code': lambda code, ch: u_hex(code),
+                'Code': lambda code, ch: 'U' + u_hex(code),
                 'Char': lambda code, ch: u_printable_chr(ch),
             }.items(), columns.items(), {
                 'Name': lambda code, ch: u_name_or_empty(ch),
