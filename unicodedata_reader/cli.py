@@ -73,6 +73,7 @@ def _init_logging(verbose):
 
 
 class UnicodeDataCli(object):
+
     def __init__(self):
         self._parse_args()
 

@@ -8,6 +8,7 @@ from unicodedata_reader import *
 
 
 class UnicodeVerticalOrientationDataCli(UnicodeDataCli):
+
     def __init__(self):
         super().__init__()
         self._entries = UnicodeDataReader.default.vertical_orientation()

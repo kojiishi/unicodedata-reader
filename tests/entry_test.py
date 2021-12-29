@@ -136,7 +136,9 @@ def test_normalie_no_changes():
 
 
 def test_fill_missing_values():
+
     class TestEntries(UnicodeDataEntries):
+
         def missing_value(self, code: int):
             return 'B'
 

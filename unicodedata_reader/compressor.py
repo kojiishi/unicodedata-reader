@@ -22,6 +22,7 @@ def _init_logging(verbose: int):
 
 
 class UnicodeDataCompressor(object):
+
     def __init__(self, entries: UnicodeDataEntries):
         self._entries = entries
 

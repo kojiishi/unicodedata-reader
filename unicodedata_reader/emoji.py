@@ -7,6 +7,7 @@ from unicodedata_reader import *
 
 
 class UnicodeEmojiDataCli(UnicodeDataCli):
+
     def __init__(self):
         super().__init__()
         self._entries = UnicodeDataReader.default.emoji()

@@ -8,6 +8,7 @@ from unicodedata_reader import *
 
 
 class UnicodeLineBreakDataCli(UnicodeDataCli):
+
     def __init__(self):
         super().__init__()
         self._entries = UnicodeDataReader.default.line_break()

@@ -27,6 +27,7 @@ def u_enc(c, encoding):
 
 
 class BidiBrackets(object):
+
     def __init__(self, pair: int, type: str):
         self.pair = pair
         self.type = type
@@ -55,6 +56,7 @@ class UnicodeDataEntry(object):
 
     [Unicode character database]: https://unicode.org/reports/tr44/
     """
+
     def __init__(self, min: int, max: int, value):
         self.min = min
         self.max = max
@@ -166,6 +168,7 @@ class UnicodeDataEntries(object):
     or a list of `UnicodeDataEntry`.
     [Unicode character database]: https://unicode.org/reports/tr44/
     """
+
     def __init__(self,
                  entries: Optional[Union[Iterable[UnicodeDataEntry],
                                          Sequence[UnicodeDataEntry]]] = None,
@@ -310,12 +313,14 @@ class UnicodeDataEntries(object):
 
 
 class UnicodeBidiBracketsDataEntries(UnicodeDataEntries):
+
     def _load_lines(self, lines: Iterable[str], converter=None):
         converter = converter or BidiBrackets.from_values
         super()._load_lines(lines, converter=converter)
 
 
 class UnicodeEmojiDataEntries(UnicodeDataEntries):
+
     def _load_lines(self, lines: Iterable[str], converter=None):
         converter = converter or (lambda v: EmojiType[v])
         super()._load_lines(lines, converter=converter)
@@ -340,6 +345,7 @@ class UnicodeEmojiDataEntries(UnicodeDataEntries):
 
 
 class UnicodeLineBreakDataEntries(UnicodeDataEntries):
+
     def _load_comment(self, comment: str, start_index: int):
         # Load missing value entries. See the comments in:
         # https://www.unicode.org/Public/UNIDATA/LineBreak.txt
@@ -362,12 +368,14 @@ class UnicodeLineBreakDataEntries(UnicodeDataEntries):
 
 
 class UnicodeScriptExtensionsDataEntries(UnicodeDataEntries):
+
     def _load_lines(self, lines: Iterable[str], converter=None):
         converter = converter or (lambda v: v.split())
         super()._load_lines(lines, converter=converter)
 
 
 class UnicodeVerticalOrientationDataEntries(UnicodeDataEntries):
+
     def _load_comment(self, comment: str, start_index: int):
         # Load missing value entries. See the comments in:
         # https://www.unicode.org/Public/UNIDATA/VerticalOrientation.txt
