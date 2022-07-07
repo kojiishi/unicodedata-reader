@@ -266,7 +266,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "tox"
-version = "3.25.0"
+version = "3.25.1"
 description = "tox is a generic virtualenv management and test command line tool"
 category = "dev"
 optional = false
@@ -335,7 +335,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8"
-content-hash = "cb227b0363b6127716d0b994c0cc91e52816546e701fdc01d5e06774c27ff836"
+content-hash = "c29dd6f508f25c5fd247e28da379577e8900b955de68e920da5263324e180922"
 
 [metadata.files]
 atomicwrites = [
@@ -422,6 +422,18 @@ pytest = [
     {file = "pytest-7.1.2.tar.gz", hash = "sha256:a06a0425453864a270bc45e71f783330a7428defb4230fb5e6a731fde06ecd45"},
 ]
 pytype = [
+    {file = "pytype-2022.6.14-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:0d64d0f79bf20cce82c1c2203a4925f22ecf74a438d36e2c0487724520226f10"},
+    {file = "pytype-2022.6.14-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:dd4af1a3fe5e0991169bf98a17ef2a966ad2a71547d5cfc939ad44d18c6ed68b"},
+    {file = "pytype-2022.6.14-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4abd878d59a7dfeda730a92680686739e5dfd39030c49616c1b4a9a463f63520"},
+    {file = "pytype-2022.6.14-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:4ac7510e63fdfac33adaa60c12d0ab6d5f79186f21359b03bca9e147815033f5"},
+    {file = "pytype-2022.6.14-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3ceae1dfdc3a4b9976328044b4c1428128227cc83f3cc3252bc50ef863e7ec36"},
+    {file = "pytype-2022.6.14-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:90215c2959d818b6009e84039a31565e9945f7445401dd766c0fbabb67c111cb"},
+    {file = "pytype-2022.6.14-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:f96fe65ccfe9a040a86394c8e962cb926413e6fe568c6e9d2298a9ab6d1bc8dc"},
+    {file = "pytype-2022.6.14-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:31ad6f1599cc7f18c8ffeab0447317d6ae17108d6ff868e1a415e0d9175876d7"},
+    {file = "pytype-2022.6.14-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a0ad598e9dda06608d0bfe09b2e83d41900975bd7be6a7b466c21ee10f05d83c"},
+    {file = "pytype-2022.6.14-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:c482de5fee4fc96ce6bb0dd53ce97999f41db01e4621009581f4b9bd970d0241"},
+    {file = "pytype-2022.6.14-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d028a564f82cdcd408207baab0aa1bcbceaf0d1f1cc3b18397033d6df3293a3d"},
+    {file = "pytype-2022.6.14-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0842fd0b1bc1d7b6e5ab88cfb582f5023f6fb612fce97372f460a62e0d4c76aa"},
     {file = "pytype-2022.6.14.tar.gz", hash = "sha256:4ad41440f4cd916788e94cd2234163b3bf62e8d795e4d7aab28bb197db591302"},
 ]
 pyyaml = [
@@ -476,8 +488,8 @@ tomli = [
     {file = "tomli-2.0.0.tar.gz", hash = "sha256:c292c34f58502a1eb2bbb9f5bbc9a5ebc37bee10ffb8c2d6bbdfa8eb13cc14e1"},
 ]
 tox = [
-    {file = "tox-3.25.0-py2.py3-none-any.whl", hash = "sha256:0805727eb4d6b049de304977dfc9ce315a1938e6619c3ab9f38682bb04662a5a"},
-    {file = "tox-3.25.0.tar.gz", hash = "sha256:37888f3092aa4e9f835fc8cc6dadbaaa0782651c41ef359e3a5743fcb0308160"},
+    {file = "tox-3.25.1-py2.py3-none-any.whl", hash = "sha256:c38e15f4733683a9cc0129fba078633e07eb0961f550a010ada879e95fb32632"},
+    {file = "tox-3.25.1.tar.gz", hash = "sha256:c138327815f53bc6da4fe56baec5f25f00622ae69ef3fe4e1e385720e22486f9"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.0.1-py3-none-any.whl", hash = "sha256:7f001e5ac290a0c0401508864c7ec868be4e701886d5b573a9528ed3973d9d3b"},
