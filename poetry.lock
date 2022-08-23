@@ -149,8 +149,8 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-dev = ["pre-commit", "tox"]
-testing = ["pytest", "pytest-benchmark"]
+testing = ["pytest-benchmark", "pytest"]
+dev = ["tox", "pre-commit"]
 
 [[package]]
 name = "py"
@@ -205,7 +205,7 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.
 
 [[package]]
 name = "pytype"
-version = "2022.7.18"
+version = "2022.8.23"
 description = "Python type inferencer"
 category = "dev"
 optional = false
@@ -220,6 +220,7 @@ ninja = ">=1.10.0.post2"
 pydot = ">=1.4.2"
 tabulate = ">=0.8.10"
 toml = ">=0.10.2"
+typing-extensions = ">=4.3.0"
 
 [[package]]
 name = "pyyaml"
@@ -288,11 +289,11 @@ testing = ["flaky (>=3.4.0)", "freezegun (>=0.3.11)", "pytest (>=4.0.0)", "pytes
 
 [[package]]
 name = "typing-extensions"
-version = "4.0.1"
-description = "Backported and Experimental Type Hints for Python 3.6+"
+version = "4.3.0"
+description = "Backported and Experimental Type Hints for Python 3.7+"
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [[package]]
 name = "typing-inspect"
@@ -444,19 +445,19 @@ pytest = [
     {file = "pytest-7.1.2.tar.gz", hash = "sha256:a06a0425453864a270bc45e71f783330a7428defb4230fb5e6a731fde06ecd45"},
 ]
 pytype = [
-    {file = "pytype-2022.7.18-cp310-cp310-macosx_10_15_universal2.whl", hash = "sha256:4fefe209d124fcec4e9728e7627f8e1dc667a28f41b94d4b96aced4049ae022c"},
-    {file = "pytype-2022.7.18-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9ab2c1f231adbf99719dfcdad0923c95af130185ebd55e311311236ea3445ddc"},
-    {file = "pytype-2022.7.18-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5562bca4b4373e93e486442afa5076b7ebdc8d2da9afc3b52aa3c760140cb22f"},
-    {file = "pytype-2022.7.18-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:c705d2a83970a5547d2072e681c4d998d3fdb812c7ec865fec44f76ccfbbc5cd"},
-    {file = "pytype-2022.7.18-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0bf5fcee002d4734f4a4d94a1988bb40a78de219c67228cd75d45e29b5aa0520"},
-    {file = "pytype-2022.7.18-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1f111abb70778a60a53823e9926d544f7867591df0b3dcc5029a6aab40d29b3d"},
-    {file = "pytype-2022.7.18-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:ea0d327c6a3dcc759b1cd0a9a8ab5d7fb79cc95722cf29c9d5ffe01117fdb3b2"},
-    {file = "pytype-2022.7.18-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:48e971edf29e996a5b6356903d879bb1003fc9db00364bd0d33d5e7d55dd4d3d"},
-    {file = "pytype-2022.7.18-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1b5ccc49d508ecf6d4608a0ce8ee1da1c09784f8909d537086a00078d52114da"},
-    {file = "pytype-2022.7.18-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:89e21d6bcb90440b89d4cb6313b547515ac2619799cc2e9ab84fb72d0d1c77ca"},
-    {file = "pytype-2022.7.18-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:65181cb47b2ea4bf61171233f5c9c861a6871a9abd8460e37bda61f3e36a0f59"},
-    {file = "pytype-2022.7.18-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ea550e5dd6e25d3af36ca762f215d4020c244323b8583979fe906bb8c42c9783"},
-    {file = "pytype-2022.7.18.tar.gz", hash = "sha256:1275b695b5b8dec27a618dc3b22abcea11806a7ae0e0769dc1d4b01552b33d4d"},
+    {file = "pytype-2022.8.23-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:92b4e981c71b7f79126ef2c52a04bc2dafc061b88b65427702e95d77882a72ad"},
+    {file = "pytype-2022.8.23-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3a68f85c59e3d1add8583a5dfd74db3817c7d653134a5955707bce7e31c2785d"},
+    {file = "pytype-2022.8.23-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b9fe9d7d5fcd9b44d8981832ee49123cd5596d8e8ecaf3c7472c9ccc191fadac"},
+    {file = "pytype-2022.8.23-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:a0ead4f4d33b5ebc4d572bc6e673241828906630e6efc2a2bbadf68d3fe2cbc7"},
+    {file = "pytype-2022.8.23-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3b766edfa62d214900bcb6572eadd1434d013f5bd701b6ac4d9f557b624293d7"},
+    {file = "pytype-2022.8.23-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e9212f982c51f830b043aaa134e04ce9f6b7cc6eb32903959d6ba6fdb55765cc"},
+    {file = "pytype-2022.8.23-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:addd39eccc9f1351acfcde4e0a9c7c11fbae0cc5245abf11b6e1e84b880b142d"},
+    {file = "pytype-2022.8.23-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4c99099bf3efdfaaadb6c83100e0c0a0a3c1b6b7880a6f3652324c56c854da32"},
+    {file = "pytype-2022.8.23-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:430a5b5104a96ada9c0f3f4f4320754d08240113ebd5d7a9cf2057c8287a8621"},
+    {file = "pytype-2022.8.23-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:a044f30f417979bf76edb480cb359f36434bc8284a3b6fb6c1a91bff60afaeb0"},
+    {file = "pytype-2022.8.23-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d822da7464cccd45795460776874dc20be39f15349891a30861e3d0faee54a14"},
+    {file = "pytype-2022.8.23-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7781a9ad52487936431f4d110f28ee82bc7683b7250046a350f134a199cde01b"},
+    {file = "pytype-2022.8.23.tar.gz", hash = "sha256:c498162248f21cc1e9510070594c8e28461c2c7a935d754c09d492ac7cd03842"},
 ]
 pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},
@@ -515,8 +516,8 @@ tox = [
     {file = "tox-3.25.1.tar.gz", hash = "sha256:c138327815f53bc6da4fe56baec5f25f00622ae69ef3fe4e1e385720e22486f9"},
 ]
 typing-extensions = [
-    {file = "typing_extensions-4.0.1-py3-none-any.whl", hash = "sha256:7f001e5ac290a0c0401508864c7ec868be4e701886d5b573a9528ed3973d9d3b"},
-    {file = "typing_extensions-4.0.1.tar.gz", hash = "sha256:4ca091dea149f945ec56afb48dae714f21e8692ef22a395223bcd328961b6a0e"},
+    {file = "typing_extensions-4.3.0-py3-none-any.whl", hash = "sha256:25642c956049920a5aa49edcdd6ab1e06d7e5d467fc00e0506c44ac86fbfca02"},
+    {file = "typing_extensions-4.3.0.tar.gz", hash = "sha256:e6d2677a32f47fc7eb2795db1dd15c1f34eff616bcaf2cfb5e997f854fa1c4a6"},
 ]
 typing-inspect = [
     {file = "typing_inspect-0.7.1-py2-none-any.whl", hash = "sha256:b1f56c0783ef0f25fb064a01be6e5407e54cf4a4bf4f3ba3fe51e0bd6dcea9e5"},
