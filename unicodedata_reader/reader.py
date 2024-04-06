@@ -23,6 +23,12 @@ class UnicodeDataReader(object):
     default = None
     is_caching_allowed = True
 
+    def __init__(
+        self,
+        url_template: str = 'https://www.unicode.org/Public/UNIDATA/{0}.txt'
+    ) -> None:
+        self.url_template = url_template
+
     def bidi_brackets(self) -> UnicodeDataEntries:
         name = 'BidiBrackets'
         lines = self.read_lines(name)
@@ -74,8 +80,11 @@ class UnicodeDataReader(object):
         lines = self.read_lines(name)
         return UnicodeVerticalOrientationDataEntries(name=name, lines=lines)
 
+    def get_url(self, name: str) -> str:
+        return self.url_template.format(name)
+
     def read_lines(self, name: str) -> Iterable[str]:
-        url = f'https://www.unicode.org/Public/UNIDATA/{name}.txt'
+        url = self.get_url(name)
         _logger.debug('Downloading %s', url)
         with urllib.request.urlopen(url) as response:
             body = response.read().decode('utf-8')
