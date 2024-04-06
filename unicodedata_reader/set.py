@@ -16,14 +16,17 @@ class Set(object):
     def __iter__(self) -> Iterable[int]:
         return self.set.__iter__()
 
-    def __isub__(self, other: 'Set') -> None:
+    def __isub__(self, other: 'Set') -> 'Set':
         self.set -= other.set
+        return self
 
-    def __iand__(self, other: 'Set') -> None:
+    def __iand__(self, other: 'Set') -> 'Set':
         self.set &= other.set
+        return self
 
-    def __ior__(self, other: 'Set') -> None:
+    def __ior__(self, other: 'Set') -> 'Set':
         self.set |= other.set
+        return self
 
     def add(self, code: int) -> None:
         self.set.add(code)

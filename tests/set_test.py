@@ -23,6 +23,15 @@ def test_set_iter():
     assert list(s) == [1, 5]
 
 
+def test_set_ior():
+    s = ur.Set()
+    s.add(1)
+    s1 = ur.Set()
+    s1.add(5)
+    s |= s1
+    assert (list(s), [1, 5])
+
+
 def test_set_general_category():
     reader = ur.UnicodeDataReader()
     l = ur.Set.general_category('L', reader)
