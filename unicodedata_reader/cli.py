@@ -140,7 +140,7 @@ class UnicodeDataCli(object):
         parser.parse_args(namespace=self)
         _init_logging(self.verbose)  # pytype: disable=attribute-error
         if self.no_cache:
-            UnicodeDataReader.is_caching_allowed = False
+            UnicodeDataReader.default = UnicodeDataReader()
 
     def main(self):
         if self.template:
