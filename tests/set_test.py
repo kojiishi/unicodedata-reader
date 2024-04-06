@@ -42,8 +42,27 @@ def test_set_general_category():
     assert 0x0061 not in lu
 
 
+def test_set_scripts_han():
+    reader = ur.UnicodeDataReader()
+    han = ur.Set.scripts('Han', reader)
+    # https://github.com/unicode-org/unicodetools/issues/770#issuecomment-2041110463
+    assert 0x2B739 in han  # Added in Unicode 15.0
+    assert 0x323AF in han  # Added in Unicode 15.0
+    assert 0x31350 in han  # Added in Unicode 15.0
+    assert 0x2EBF0 in han  # Added in Unicode 15.1
+    assert 0x2EE5D in han  # Added in Unicode 15.1
+
+
+def test_set_scripts_hira():
+    reader = ur.UnicodeDataReader()
+    hira = ur.Set.scripts('Hiragana', reader)
+    assert 0x3041 in hira
+
+
 def test_set_script_extensions():
     reader = ur.UnicodeDataReader()
     kana = ur.Set.script_extensions('Kana', reader)
     assert 0x20 not in kana
     assert 0x3031 in kana
+    hira = ur.Set.script_extensions('Hira', reader)
+    assert 0x3031 in hira

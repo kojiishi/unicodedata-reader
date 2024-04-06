@@ -1,4 +1,6 @@
+from typing import Any
 from typing import Callable
+from typing import Iterable
 
 from unicodedata_reader.entry import *
 from unicodedata_reader.reader import *
