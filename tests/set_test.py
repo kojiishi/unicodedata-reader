@@ -16,6 +16,13 @@ def test_set_add_remove():
     s.remove(3)
 
 
+def test_set_iter():
+    s = ur.Set()
+    s.add(1)
+    s.add(5)
+    assert list(s) == [1, 5]
+
+
 def test_set_general_category():
     reader = ur.UnicodeDataReader()
     l = ur.Set.general_category('L', reader)

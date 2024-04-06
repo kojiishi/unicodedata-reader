@@ -13,6 +13,9 @@ class Set(object):
     def __contains__(self, code_point: int) -> bool:
         return code_point in self.set
 
+    def __iter__(self) -> Iterable[int]:
+        return self.set.__iter__()
+
     def __isub__(self, other: 'Set') -> None:
         self.set -= other.set
 
