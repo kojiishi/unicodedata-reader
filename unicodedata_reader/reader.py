@@ -54,6 +54,11 @@ class UnicodeDataReader(object):
         lines = self.read_lines(name)
         return UnicodeLineBreakDataEntries(name=name, lines=lines)
 
+    def name(self) -> UnicodeDataEntries:
+        lines = self.read_lines('extracted/DerivedName')
+        entries = UnicodeDataEntries(name='Name', lines=lines)
+        return entries
+
     def scripts(self) -> UnicodeDataEntries:
         name = 'Scripts'
         lines = self.read_lines(name)
