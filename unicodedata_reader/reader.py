@@ -33,6 +33,11 @@ class UnicodeDataReader(object):
         lines = self.read_lines(name)
         return UnicodeDataEntries(name=name, lines=lines)
 
+    def east_asian_width(self) -> UnicodeDataEntries:
+        name = 'EastAsianWidth'
+        lines = self.read_lines(name)
+        return UnicodeDataEntries(name=name, lines=lines)
+
     def emoji(self) -> UnicodeDataEntries:
         lines = self.read_lines('emoji/emoji-data')
         return UnicodeEmojiDataEntries(name='Emoji', lines=lines)

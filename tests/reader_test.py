@@ -5,3 +5,12 @@ def test_hex():
     assert u_hex(1) == '0001'
     assert u_hex(0xfeff) == 'FEFF'
     assert u_hex(0x12345) == '12345'
+
+
+def test_east_asian_width():
+    entries = UnicodeDataReader().east_asian_width()
+    assert entries.value(0x20) == 'Na'
+    assert entries.value(0xB7) == 'A'
+    assert entries.value(0x3000) == 'F'
+    assert entries.value(0x3001) == 'W'
+    assert entries.value(0x2A700) == 'W'

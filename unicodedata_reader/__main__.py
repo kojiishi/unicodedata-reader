@@ -2,6 +2,7 @@ import pathlib
 import sys
 
 import unicodedata_reader.bidi_brackets as bidi_brackets
+import unicodedata_reader.east_asian_width as ea
 import unicodedata_reader.emoji as emoji
 import unicodedata_reader.general_category as gc
 import unicodedata_reader.line_break as lb
@@ -12,6 +13,7 @@ def main():
     args = sys.argv
     sub_commands = {
         'bidi': lambda: bidi_brackets.dump_bidi_brackets(),
+        'ea': lambda: ea.UnicodeEastAsianWidthDataCli().main(),
         'emoji': lambda: emoji.UnicodeEmojiDataCli().main(),
         'gc': lambda: gc.UnicodeGeneralCategoryDataCli().main(),
         'lb': lambda: lb.UnicodeLineBreakDataCli().main(),
