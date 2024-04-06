@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-unicodedata-reader lb -vt js/template.js
-unicodedata-reader gc -vt js/template.js
+unicodedata-reader lb -fv -t js/template.js
+unicodedata-reader gc -fv -t js/template.js
 
 yapf -ir -vv .
 tox -p
