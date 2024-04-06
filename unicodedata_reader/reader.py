@@ -1,6 +1,7 @@
 import logging
 import pathlib
 from typing import Iterable
+import shutil
 import urllib.request
 
 from unicodedata_reader.entry import *
@@ -120,6 +121,14 @@ class UnicodeDataCachedReader(UnicodeDataReader):
             file.writelines(lines)
 
         return lines
+
+    @staticmethod
+    def clear_cache(ignore_errors: bool = False):
+        cache_dir = UnicodeDataCachedReader._cache_dir
+        if not cache_dir or not cache_dir.exists():
+            return
+        _logger.debug('Deleting cache %s', cache_dir)
+        shutil.rmtree(cache_dir, ignore_errors=ignore_errors)
 
 
 UnicodeDataReader.default = UnicodeDataCachedReader()

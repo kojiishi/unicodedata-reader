@@ -125,7 +125,8 @@ class UnicodeDataCli(object):
         parser.add_argument('text',
                             nargs='*',
                             help='show properties for the text')
-        parser.add_argument('-f', '--no-cache', action='store_true')
+        parser.add_argument('-f', '--clear-cache', action='store_true')
+        parser.add_argument('-F', '--no-cache', action='store_true')
         parser.add_argument('--name', help='$NAME in the template')
         parser.add_argument('-t',
                             '--template',
@@ -139,6 +140,8 @@ class UnicodeDataCli(object):
                             default=0)
         parser.parse_args(namespace=self)
         _init_logging(self.verbose)  # pytype: disable=attribute-error
+        if self.clear_cache:
+            UnicodeDataCachedReader.clear_cache()
         if self.no_cache:
             UnicodeDataReader.default = UnicodeDataReader()
 
