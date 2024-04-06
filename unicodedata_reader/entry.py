@@ -57,6 +57,8 @@ class UnicodeDataEntry(object):
     [Unicode character database]: https://unicode.org/reports/tr44/
     """
 
+    max_code_point = 0x10FFFF
+
     def __init__(self, min: int, max: int, value):
         self.min = min
         self.max = max
