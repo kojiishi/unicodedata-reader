@@ -218,6 +218,9 @@ class UnicodeDataEntries(object):
         self._ensure_multi_iterable()
         return len(self._entries)
 
+    def __getitem__(self, code: int) -> Any:
+        return self.value(code)
+
     def missing_value(self, code: int):
         if self._missing_entries:
             # `_missing_entries` can overlap, iterate all entries.
@@ -251,7 +254,7 @@ class UnicodeDataEntries(object):
         self._ensure_multi_iterable()
         return itertools.chain(*(e.range() for e in self._entries))
 
-    def value(self, code: int):
+    def value(self, code: int) -> Any:
         """Returns the value for the given code point."""
         self._ensure_multi_iterable()
         for entry in self._entries:

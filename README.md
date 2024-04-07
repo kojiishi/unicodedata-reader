@@ -48,7 +48,7 @@ import unicodedata_reader
 
 reader = unicodedata_reader.UnicodeDataReader.default
 lb = reader.line_break()
-print(lb.value(0x41))
+print(lb[0x41])
 ```
 The example above prints `AL`,
 the [Line_Break property] value for U+0041.
