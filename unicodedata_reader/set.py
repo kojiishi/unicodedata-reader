@@ -7,10 +7,14 @@ from unicodedata_reader.reader import *
 
 
 class Set(object):
-    """A simple set of Unicode code points."""
+    """A simple wrapper of a `set` of Unicode code points."""
 
-    def __init__(self) -> None:
+    def __init__(self,
+                 entries: UnicodeDataEntries = None,
+                 pred: Callable[[Any], bool] = None) -> None:
         self.set = set()  # type: set[int]
+        if entries:
+            self.add_entries(entries, pred)
 
     def __contains__(self, code_point: int) -> bool:
         return code_point in self.set
@@ -38,40 +42,28 @@ class Set(object):
 
     def add_entries(self, entries: UnicodeDataEntries, pred: Callable[[Any],
                                                                       bool]):
-        for entry in entries:
-            if pred(entry.value):
-                for code in entry.range():
-                    self.set.add(code)
+        entries.add_to_set(pred, self.set)
 
     @staticmethod
     def east_asian_width(
             value: str,
             reader: UnicodeDataReader = UnicodeDataReader.default) -> 'Set':
-        set = Set()
-        set.add_entries(reader.east_asian_width(), lambda v: v == value)
-        return set
+        return Set(reader.east_asian_width(), lambda v: v == value)
 
     @staticmethod
     def general_category(
             value: str,
             reader: UnicodeDataReader = UnicodeDataReader.default) -> 'Set':
-        set = Set()
-        set.add_entries(reader.general_category(),
-                        lambda v: v.startswith(value))
-        return set
+        return Set(reader.general_category(), lambda v: v.startswith(value))
 
     @staticmethod
     def scripts(
             value: str,
             reader: UnicodeDataReader = UnicodeDataReader.default) -> 'Set':
-        set = Set()
-        set.add_entries(reader.scripts(), lambda v: v == value)
-        return set
+        return Set(reader.scripts(), lambda v: v == value)
 
     @staticmethod
     def script_extensions(
             value: str,
             reader: UnicodeDataReader = UnicodeDataReader.default) -> 'Set':
-        set = Set()
-        set.add_entries(reader.script_extensions(), lambda v: value in v)
-        return set
+        return Set(reader.script_extensions(), lambda v: value in v)

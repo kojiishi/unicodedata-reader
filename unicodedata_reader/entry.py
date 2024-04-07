@@ -4,6 +4,7 @@ import logging
 import re
 import types
 from typing import Any
+from typing import Callable
 from typing import Dict
 from typing import Iterable
 from typing import List
@@ -258,6 +259,32 @@ class UnicodeDataEntries(object):
             if code <= entry.max:
                 return entry.value
         return self.missing_value(code)
+
+    def filter(self, pred: Callable[[Any],
+                                    bool]) -> Iterable[UnicodeDataEntry]:
+        """Returns an `Iterable` of `UnicodeDataEntry` for the given `pred`."""
+        return (entry for entry in self if pred(entry.value))
+
+    def codes_for(self, pred: Callable[[Any], bool]) -> Iterable[int]:
+        """Returns an `Iterable` of Unicode code points for the given `pred`."""
+        return itertools.chain(*(e.range() for e in self.filter(pred)))
+
+    def add_to_set(self, pred: Callable[[Any], bool], set: set[int]) -> None:
+        """Add values `pred` returns `True` to `set[int]`."""
+        for code in self.codes_for(pred):
+            set.add(code)
+
+    def remove_from_set(self, pred: Callable[[Any], bool],
+                        set: set[int]) -> None:
+        """Remove values `pred` returns `True` from `set[int]`."""
+        for code in self.codes_for(pred):
+            set.discard(code)
+
+    def to_set(self, pred: Callable[[Any], bool]) -> set[int]:
+        """Returns a `set[int]` of values `pred` returns `True`."""
+        s = set()  # type: set[int]
+        self.add_to_set(pred, s)
+        return s
 
     def values_for_code(self) -> Iterable[Any]:
         """Returns a list of values whose index is the Unicode code point.
