@@ -10,7 +10,6 @@ from typing import Iterable
 from typing import List
 from typing import Optional
 from typing import Sequence
-from typing import Set
 from typing import Union
 from typing import Tuple
 
@@ -273,20 +272,20 @@ class UnicodeDataEntries(object):
         """Returns an `Iterable` of Unicode code points for the given `pred`."""
         return itertools.chain(*(e.range() for e in self.filter(pred)))
 
-    def add_to_set(self, pred: Callable[[Any], bool], set: Set[int]) -> None:
+    def add_to_set(self, pred: Callable[[Any], bool], set: set) -> None:
         """Add values `pred` returns `True` to `set[int]`."""
         for code in self.codes_for(pred):
             set.add(code)
 
     def remove_from_set(self, pred: Callable[[Any], bool],
-                        set: Set[int]) -> None:
+                        set: set) -> None:
         """Remove values `pred` returns `True` from `set[int]`."""
         for code in self.codes_for(pred):
             set.discard(code)
 
-    def to_set(self, pred: Callable[[Any], bool]) -> Set[int]:
+    def to_set(self, pred: Callable[[Any], bool]) -> set:
         """Returns a `set[int]` of values `pred` returns `True`."""
-        s = set()  # type: set[int]
+        s = set()
         self.add_to_set(pred, s)
         return s
 
