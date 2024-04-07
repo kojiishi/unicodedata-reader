@@ -16,7 +16,7 @@ from typing import Tuple
 _logger = logging.getLogger('UnicodeDataEntry')
 
 
-def u_hex(value):
+def u_hex(value: int) -> str:
     return f'{value:04X}'
 
 
@@ -88,11 +88,15 @@ class UnicodeDataEntry(object):
         self.assert_range()
         return self.max - self.min + 1
 
-    def range_as_str(self):
+    def range_as_str(self, converter: Callable[[int], str] = u_hex):
         self.assert_range()
+        min = converter(self.min)
         if self.min == self.max:
-            return u_hex(self.min)
-        return f'{u_hex(self.min)}..{u_hex(self.max)}'
+            return min
+        max = converter(self.max)
+        if min == max:
+            return min
+        return f'{min}..{max}'
 
     def to_str(self, separator: str = ';'):
         return separator.join((self.range_as_str(), str(self.value)))

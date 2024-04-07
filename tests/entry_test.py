@@ -151,3 +151,16 @@ def test_fill_missing_values():
     assert len(entries) == 2
     assert entries._entries == (UnicodeDataEntry(0, 10, 'A'),
                                 UnicodeDataEntry(11, 20, 'B'))
+
+
+def test_range_as_str():
+    entry = UnicodeDataEntry(9, 9, 'A')
+    assert entry.range_as_str() == '0009'
+
+    entry = UnicodeDataEntry(9, 11, 'A')
+    assert entry.range_as_str() == '0009..000B'
+    assert entry.range_as_str(lambda c: str(c)) == '9..11'
+    assert entry.range_as_str(lambda c: 'XYZ') == 'XYZ'
+
+    entry = UnicodeDataEntry(0xFFFF, 0x10001, 'A')
+    assert entry.range_as_str() == 'FFFF..10001'
