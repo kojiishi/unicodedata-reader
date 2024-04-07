@@ -20,3 +20,11 @@ def test_name():
     entries = UnicodeDataReader().name()
     assert entries.value(0x20) == 'SPACE'
     assert entries.value(0xE0100) == 'VARIATION SELECTOR-17'
+
+
+def test_context():
+    original_default = UnicodeDataReader.default
+    with UnicodeDataReader.Context(UnicodeDataReader()) as in_context:
+        assert original_default != in_context
+        assert UnicodeDataReader.default == in_context
+    assert UnicodeDataReader.default == original_default

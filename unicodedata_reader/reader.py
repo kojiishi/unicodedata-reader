@@ -30,6 +30,22 @@ class UnicodeDataReader(object):
     ) -> None:
         self.url_template = url_template
 
+    class Context(object):
+        """This class changes `UnicodeDataReader.default` while in the context,
+        and restores when exit."""
+
+        def __init__(self, reader: 'UnicodeDataReader') -> None:
+            self.reader = reader
+
+        def __enter__(self):
+            self.saved_default = UnicodeDataReader.default
+            UnicodeDataReader.default = self.reader
+            return self.reader
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            UnicodeDataReader.default = self.saved_default
+            return None
+
     def bidi_brackets(self) -> UnicodeDataEntries:
         name = 'BidiBrackets'
         lines = self.read_lines(name)
