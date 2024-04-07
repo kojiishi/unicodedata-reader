@@ -46,25 +46,21 @@ class Set(object):
         entries.add_to_set(pred, self.set)
 
     @staticmethod
-    def east_asian_width(
-            value: str,
-            reader: UnicodeDataReader = UnicodeDataReader.default) -> 'Set':
+    def east_asian_width(value: str) -> 'Set':
+        reader = UnicodeDataReader.default
         return Set(reader.east_asian_width(), lambda v: v == value)
 
     @staticmethod
-    def general_category(
-            value: str,
-            reader: UnicodeDataReader = UnicodeDataReader.default) -> 'Set':
+    def general_category(value: str) -> 'Set':
+        reader = UnicodeDataReader.default
         return Set(reader.general_category(), lambda v: v.startswith(value))
 
     @staticmethod
-    def scripts(
-            value: str,
-            reader: UnicodeDataReader = UnicodeDataReader.default) -> 'Set':
+    def scripts(value: str) -> 'Set':
+        reader = UnicodeDataReader.default
         return Set(reader.scripts(), lambda v: v == value)
 
     @staticmethod
-    def script_extensions(
-            value: str,
-            reader: UnicodeDataReader = UnicodeDataReader.default) -> 'Set':
+    def script_extensions(value: str) -> 'Set':
+        reader = UnicodeDataReader.default
         return Set(reader.script_extensions(), lambda v: value in v)
