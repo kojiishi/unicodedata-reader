@@ -79,6 +79,10 @@ class UnicodeDataEntry(object):
     def is_in_range(self, code: int) -> bool:
         return code >= self.min and code <= self.max
 
+    @staticmethod
+    def to_codes(entries: Iterable['UnicodeDataEntry']):
+        return itertools.chain(*(e.range() for e in entries))
+
     @property
     def count(self):
         self.assert_range()
@@ -268,18 +272,14 @@ class UnicodeDataEntries(object):
         """Returns an `Iterable` of `UnicodeDataEntry` for the given `pred`."""
         return (entry for entry in self if pred(entry.value))
 
-    def codes_for(self, pred: Callable[[Any], bool]) -> Iterable[int]:
-        """Returns an `Iterable` of Unicode code points for the given `pred`."""
-        return itertools.chain(*(e.range() for e in self.filter(pred)))
-
     def add_to_set(self, pred: Callable[[Any], bool], set: set) -> None:
         """Add values `pred` returns `True` to `set[int]`."""
-        for code in self.codes_for(pred):
+        for code in UnicodeDataEntry.to_codes(self.filter(pred)):
             set.add(code)
 
     def remove_from_set(self, pred: Callable[[Any], bool], set: set) -> None:
         """Remove values `pred` returns `True` from `set[int]`."""
-        for code in self.codes_for(pred):
+        for code in UnicodeDataEntry.to_codes(self.filter(pred)):
             set.discard(code)
 
     def to_set(self, pred: Callable[[Any], bool]) -> set:
