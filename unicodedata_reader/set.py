@@ -17,30 +17,6 @@ class Set(object):
         if entries:
             entries.add_to_set(predicate, self.set)
 
-    def __contains__(self, code_point: int) -> bool:
-        return code_point in self.set
-
-    def __iter__(self) -> Iterable[int]:
-        return self.set.__iter__()
-
-    def __isub__(self, other: 'Set') -> 'Set':
-        self.set -= other.set
-        return self
-
-    def __iand__(self, other: 'Set') -> 'Set':
-        self.set &= other.set
-        return self
-
-    def __ior__(self, other: 'Set') -> 'Set':
-        self.set |= other.set
-        return self
-
-    def add(self, code: int) -> None:
-        self.set.add(code)
-
-    def remove(self, code: int) -> None:
-        self.set.discard(code)
-
     @staticmethod
     def east_asian_width(*values: str) -> 'Set':
         entries = UnicodeDataReader.default.east_asian_width()
@@ -82,3 +58,27 @@ class Set(object):
             return Set(entries, lambda v: value in v)
         s = set(values)
         return Set(entries, lambda v: len(set(v) & s))
+
+    def __contains__(self, code_point: int) -> bool:
+        return code_point in self.set
+
+    def __iter__(self) -> Iterable[int]:
+        return self.set.__iter__()
+
+    def __isub__(self, other: 'Set') -> 'Set':
+        self.set -= other.set
+        return self
+
+    def __iand__(self, other: 'Set') -> 'Set':
+        self.set &= other.set
+        return self
+
+    def __ior__(self, other: 'Set') -> 'Set':
+        self.set |= other.set
+        return self
+
+    def add(self, code: int) -> None:
+        self.set.add(code)
+
+    def remove(self, code: int) -> None:
+        self.set.discard(code)
