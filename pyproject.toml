@@ -17,7 +17,7 @@ platformdirs = ">=2.2,<5.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
-pytype = {version = "*", python = "<3.10"}
+pytype = "*"
 tox = "^4.14.2"
 yapf = "^0.40.2"
 
