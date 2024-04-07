@@ -277,8 +277,7 @@ class UnicodeDataEntries(object):
         for code in self.codes_for(pred):
             set.add(code)
 
-    def remove_from_set(self, pred: Callable[[Any], bool],
-                        set: set) -> None:
+    def remove_from_set(self, pred: Callable[[Any], bool], set: set) -> None:
         """Remove values `pred` returns `True` from `set[int]`."""
         for code in self.codes_for(pred):
             set.discard(code)
