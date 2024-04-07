@@ -1,6 +1,7 @@
 from typing import Any
 from typing import Callable
 from typing import Iterable
+from typing import Set
 
 from unicodedata_reader.entry import *
 from unicodedata_reader.reader import *
@@ -12,7 +13,7 @@ class Set(object):
     def __init__(self,
                  entries: UnicodeDataEntries = None,
                  pred: Callable[[Any], bool] = None) -> None:
-        self.set = set()  # type: set[int]
+        self.set = set()  # type: Set[int]
         if entries:
             self.add_entries(entries, pred)
 
