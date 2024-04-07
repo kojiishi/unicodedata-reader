@@ -70,6 +70,7 @@ def test_value():
     expect = (None, 'A', 'A', 'A', None, 'B', 'B')
     for code, value in enumerate(expect):
         assert entries.value(code) == value
+        assert entries[code] == value
 
     assert entries.value(code + 1) is None
 

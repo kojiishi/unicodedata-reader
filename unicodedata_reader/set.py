@@ -17,7 +17,7 @@ class Set(object):
         if entries:
             self.add_entries(entries, pred)
 
-    def __contains__(self, code_point: int) -> bool:
+    def contains(self, code_point: int) -> bool:
         return code_point in self.set
 
     def __iter__(self) -> Iterable[int]:
