@@ -12,10 +12,10 @@ class Set(object):
 
     def __init__(self,
                  entries: Optional[UnicodeDataEntries] = None,
-                 pred: Optional[Callable[[Any], bool]] = None) -> None:
+                 predicate: Optional[Callable[[Any], bool]] = None) -> None:
         self.set = set()
         if entries:
-            self.add_entries(entries, pred)
+            entries.add_to_set(predicate, self.set)
 
     def __contains__(self, code_point: int) -> bool:
         return code_point in self.set
@@ -41,26 +41,44 @@ class Set(object):
     def remove(self, code: int) -> None:
         self.set.discard(code)
 
-    def add_entries(self, entries: UnicodeDataEntries, pred: Callable[[Any],
-                                                                      bool]):
-        entries.add_to_set(pred, self.set)
+    @staticmethod
+    def east_asian_width(*values: str) -> 'Set':
+        entries = UnicodeDataReader.default.east_asian_width()
+        if len(values) == 1:
+            value = values[0]
+            return Set(entries, lambda v: v == value)
+        s = set(values)
+        return Set(entries, lambda v: v in s)
 
     @staticmethod
-    def east_asian_width(value: str) -> 'Set':
-        reader = UnicodeDataReader.default
-        return Set(reader.east_asian_width(), lambda v: v == value)
+    def general_category(*values: str) -> 'Set':
+        entries = UnicodeDataReader.default.general_category()
+        if len(values) == 1:
+            value = values[0]
+            return Set(entries, lambda v: v.startswith(value))
+
+        def predicate(v: str) -> bool:
+            for value in values:
+                if v.startswith(value):
+                    return True
+            return False
+
+        return Set(entries, predicate)
 
     @staticmethod
-    def general_category(value: str) -> 'Set':
-        reader = UnicodeDataReader.default
-        return Set(reader.general_category(), lambda v: v.startswith(value))
+    def scripts(*values: str) -> 'Set':
+        entries = UnicodeDataReader.default.scripts()
+        if len(values) == 1:
+            value = values[0]
+            return Set(entries, lambda v: v == value)
+        s = set(values)
+        return Set(entries, lambda v: v in s)
 
     @staticmethod
-    def scripts(value: str) -> 'Set':
-        reader = UnicodeDataReader.default
-        return Set(reader.scripts(), lambda v: v == value)
-
-    @staticmethod
-    def script_extensions(value: str) -> 'Set':
-        reader = UnicodeDataReader.default
-        return Set(reader.script_extensions(), lambda v: value in v)
+    def script_extensions(*values: str) -> 'Set':
+        entries = UnicodeDataReader.default.script_extensions()
+        if len(values) == 1:
+            value = values[0]
+            return Set(entries, lambda v: value in v)
+        s = set(values)
+        return Set(entries, lambda v: len(set(v) & s))
