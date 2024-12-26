@@ -19,7 +19,7 @@ platformdirs = ">=2.2,<5.0"
 pytest = "*"
 pytype = "*"
 tox = "^4.23.2"
-yapf = "^0.40.2"
+yapf = "^0.43.0"
 
 [tool.poetry.scripts]
 unicodedata-reader = 'unicodedata_reader.__main__:main'
