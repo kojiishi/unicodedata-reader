@@ -14,11 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
       # https://docs.astral.sh/uv/guides/integration/github/
       - name: Install uv and set up Python ${{ matrix.python-version }}
         uses: astral-sh/setup-uv@v5
-        with:
-          python-version: '3.x'
 
       - name: Install Dependencies
         run: |
