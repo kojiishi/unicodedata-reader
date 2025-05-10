@@ -34,5 +34,3 @@ jobs:
     - name: Test with pytest
       run: |
         uv run pytest
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
