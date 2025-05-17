@@ -1,3 +1,6 @@
+# setuptools-scm
+src/unicodedata_reader/_version.py
+
 .vscode/
 
 # Byte-compiled / optimized / DLL files
