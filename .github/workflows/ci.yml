@@ -34,3 +34,7 @@ jobs:
     - name: Test with pytest
       run: |
         uv run pytest
+
+    - name: lint with ruff
+      run: |
+        uv run ruff check

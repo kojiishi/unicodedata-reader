@@ -47,12 +47,12 @@ def test_set_east_asian_width():
 
 
 def test_set_general_category():
-    l = ur.Set.general_category('L')
-    lu = ur.Set.general_category('Lu')
-    assert 0x0041 in l
-    assert 0x0041 in lu
-    assert 0x0061 in l
-    assert 0x0061 not in lu
+    gc_l = ur.Set.general_category('L')
+    gc_lu = ur.Set.general_category('Lu')
+    assert 0x0041 in gc_l
+    assert 0x0041 in gc_lu
+    assert 0x0061 in gc_l
+    assert 0x0061 not in gc_lu
 
     lu_or_n = ur.Set.general_category('Lu', 'N')
     assert 0x002F not in lu_or_n

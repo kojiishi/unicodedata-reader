@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import unicodedata
 from typing import Any
 from typing import Callable
 from typing import Dict
