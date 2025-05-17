@@ -237,16 +237,19 @@ class UnicodeDataEntries(object):
         return None
 
     def _is_contiguous(self):
-        l = self._entries
-        return all(l[i].max + 1 == l[i + 1].min for i in range(len(l) - 1))
+        entries = self._entries
+        return all(entries[i].max + 1 == entries[i + 1].min
+                   for i in range(len(entries) - 1))
 
     def _is_distinct(self):
-        l = self._entries
-        return all(l[i].max < l[i + 1].min for i in range(len(l) - 1))
+        entries = self._entries
+        return all(entries[i].max < entries[i + 1].min
+                   for i in range(len(entries) - 1))
 
     def _is_sorted(self):
-        l = self._entries
-        return all(l[i].min <= l[i + 1].min for i in range(len(l) - 1))
+        entries = self._entries
+        return all(entries[i].min <= entries[i + 1].min
+                   for i in range(len(entries) - 1))
 
     def sort(self):
         self._entries = sorted(self._entries, key=lambda e: e.min)

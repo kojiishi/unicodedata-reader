@@ -18,6 +18,7 @@ repository = "https://github.com/kojiishi/unicodedata-reader"
 dev = [
     "pytest>=8.3.5",
     "pytype>=2024.9.13",
+    "ruff>=0.11.10",
     "tox>=4.25.0",
     "tox-uv>=1.25.0",
     "yapf>=0.43.0",
@@ -29,6 +30,12 @@ unicodedata-reader = 'unicodedata_reader.__main__:main'
 [build-system]
 requires = ["setuptools >= 77.0.3", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff.lint]
+ignore = [
+    "F403", # `from ... import *` used; unable to detect undefined names
+    "F405", # `...` may be undefined, or defined from star imports
+]
 
 [tool.pytest.ini_options]
 testpaths = "tests"
