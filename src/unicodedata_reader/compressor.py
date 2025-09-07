@@ -8,7 +8,6 @@ import sys
 from typing import Optional
 
 from unicodedata_reader import *
-from unicodedata_reader import __version__
 
 _logger = logging.getLogger('UnicodeDataCompressor')
 
@@ -120,10 +119,6 @@ def main():
                         help='increase output verbosity',
                         action='count',
                         default=0)
-    parser.add_argument("-V",
-                        "--version",
-                        action="version",
-                        version=f"%(prog)s {__version__}")
     args = parser.parse_args()
     _init_logging(args.verbose)
 
