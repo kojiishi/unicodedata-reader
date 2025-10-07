@@ -127,12 +127,12 @@ class UnicodeDataCachedReader(UnicodeDataReader):
         cache = UnicodeDataCachedReader._cache_dir / name
         if UnicodeDataCachedReader.is_caching_allowed and cache.exists():
             _logger.debug('Reading cache %s', cache)
-            return cache.read_text().splitlines(keepends=True)
+            return cache.read_text(encoding='utf-8').splitlines(keepends=True)
 
         lines = self._reader.read_lines(name)
 
         cache.parent.mkdir(parents=True, exist_ok=True)
-        with cache.open('w') as file:
+        with cache.open('w', encoding='utf-8') as file:
             _logger.debug('Writing cache %s', cache)
             file.writelines(lines)
 
