@@ -1,10 +1,9 @@
-from unicodedata_reader.reader import UnicodeDataReader
 from unicodedata_reader import *
 
 
 # This function tests reading property values using the actual data.
 # Please see `entry_test.py` for tests using test data.
-def test_line_break_value():
+def test_line_break_value(reader):
     # Entries for testing, copied from:
     # https://www.unicode.org/Public/UNIDATA/LineBreak.txt
     expects = {
@@ -16,7 +15,7 @@ def test_line_break_value():
         0x378: 'XX',  # missing value.
     }
 
-    lb = UnicodeDataReader.default.line_break()
+    lb = reader.line_break()
 
     # There are 3 ways to read values.
 
@@ -52,7 +51,7 @@ def test_line_break_value():
 
     # Use `fill_missing_values()` to fill entries for missing values.
     # Then missing values are also mapped to integers.
-    lb = UnicodeDataReader.default.line_break()
+    lb = reader.line_break()
     lb.fill_missing_values()
     lb.map_values_to_int()
     for code, value_expected in expects.items():
