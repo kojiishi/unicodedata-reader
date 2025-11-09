@@ -1,6 +1,7 @@
 import logging
-import pathlib
+from pathlib import Path
 from typing import Iterable
+from typing import Optional
 import shutil
 import urllib.request
 
@@ -111,40 +112,49 @@ class UnicodeDataReader(object):
 class UnicodeDataCachedReader(UnicodeDataReader):
     try:
         import platformdirs
-        _cache_dir = pathlib.Path(platformdirs.user_cache_dir('UNIDATA'))
-        _logger.debug('cache_dir: %s', _cache_dir)
+        _default_cache_dir = Path(platformdirs.user_cache_dir('UNIDATA'))
+        _logger.debug('cache_dir: %s', _default_cache_dir)
     except ModuleNotFoundError:
-        _cache_dir = None
+        _default_cache_dir = None
 
-    def __init__(self, reader: UnicodeDataReader = UnicodeDataReader()):
+    def __init__(self,
+                 reader: UnicodeDataReader = UnicodeDataReader(),
+                 cache_dir: Optional[Path] = None):
         self._reader = reader
+        self._cache_dir = cache_dir
 
     def read_lines(self, name: str) -> Iterable[str]:
-        cache_dir = UnicodeDataCachedReader._cache_dir
-        if not cache_dir:
-            return self._reader.read_lines(name)
-
-        cache = UnicodeDataCachedReader._cache_dir / name
-        if UnicodeDataCachedReader.is_caching_allowed and cache.exists():
+        cache = self._cache_path(name)
+        if cache and cache.exists():
             _logger.debug('Reading cache %s', cache)
             return cache.read_text(encoding='utf-8').splitlines(keepends=True)
 
         lines = self._reader.read_lines(name)
 
-        cache.parent.mkdir(parents=True, exist_ok=True)
-        with cache.open('w', encoding='utf-8') as file:
-            _logger.debug('Writing cache %s', cache)
-            file.writelines(lines)
+        if cache:
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            with cache.open('w', encoding='utf-8') as file:
+                _logger.debug('Writing cache %s', cache)
+                file.writelines(lines)
 
         return lines
 
+    def _cache_path(self, name: str) -> Optional[Path]:
+        if not UnicodeDataCachedReader.is_caching_allowed:
+            return None
+        if self._cache_dir:
+            return self._cache_dir / name
+        cache_dir = UnicodeDataCachedReader._default_cache_dir
+        if cache_dir:
+            return cache_dir / name
+        return None
+
     @staticmethod
     def clear_cache(ignore_errors: bool = False):
-        cache_dir = UnicodeDataCachedReader._cache_dir
-        if not cache_dir or not cache_dir.exists():
-            return
-        _logger.debug('Deleting cache %s', cache_dir)
-        shutil.rmtree(cache_dir, ignore_errors=ignore_errors)
+        cache_dir = UnicodeDataCachedReader._default_cache_dir
+        if cache_dir and cache_dir.exists():
+            _logger.debug('Deleting cache %s', cache_dir)
+            shutil.rmtree(cache_dir, ignore_errors=ignore_errors)
 
 
 UnicodeDataReader.default = UnicodeDataCachedReader()

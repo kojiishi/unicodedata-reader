@@ -7,8 +7,8 @@ def test_hex():
     assert u_hex(0x12345) == '12345'
 
 
-def test_east_asian_width():
-    entries = UnicodeDataReader().east_asian_width()
+def test_east_asian_width(reader):
+    entries = reader.east_asian_width()
     assert entries.value(0x20) == 'Na'
     assert entries.value(0xB7) == 'A'
     assert entries.value(0x3000) == 'F'
@@ -16,8 +16,8 @@ def test_east_asian_width():
     assert entries.value(0x2A700) == 'W'
 
 
-def test_name():
-    entries = UnicodeDataReader().name()
+def test_name(reader):
+    entries = reader.name()
     assert entries.value(0x20) == 'SPACE'
     assert entries.value(0xE0100) == 'VARIATION SELECTOR-17'
 
