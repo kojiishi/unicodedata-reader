@@ -5,7 +5,7 @@ description = ""
 authors = [{name = "Koji Ishii", email="kojii@chromium.org"}]
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "platformdirs>=4.3.8",
 ]
