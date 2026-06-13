@@ -15,9 +15,9 @@ repository = "https://github.com/kojiishi/unicodedata-reader"
 
 [dependency-groups]
 dev = [
-    "pytest>=9.0.3",
+    "pytest>=9.1.0",
     "pytype>=2024.9.13",
-    "ruff>=0.15.16",
+    "ruff>=0.15.17",
     "tox>=4.55.1",
     "tox-uv>=1.35.2",
     "yapf>=0.43.0",
