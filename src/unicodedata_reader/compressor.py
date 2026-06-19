@@ -100,7 +100,7 @@ class UnicodeDataCompressor(object):
             else:
                 if output.is_dir():
                     output = output / f'{name}{template.suffix}'
-                output.write_text(text)
+                output.write_text(text, newline='\n')
                 _logger.info('Saved to %s', output)
 
         return text
