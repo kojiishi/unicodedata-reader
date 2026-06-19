@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+tasks:
+  default:
+    deps: [check]
+
+  check:
+    - task: tests
+    - task: lint
+    - task: fmtchk
+    - git diff --exit-code
+
+  fix: "{{.PYRUN}} ruff check --fix {{.CLI_ARGS}}"
+  fmt: "{{.PYRUN}} yapf -ir -vv . {{.CLI_ARGS}}"
+  fmtchk: "{{.PYRUN}} yapf -qr -vv . {{.CLI_ARGS}}"
+  lint: "{{.PYRUN}} ruff check {{.CLI_ARGS}}"
+  test: "{{.PYRUN}} pytest tests {{.CLI_ARGS}}"
+  tests: "{{.PYRUN}} tox -p {{.CLI_ARGS}}"
+
+  gen:
+    - "{{.PYRUN}} unicodedata-reader lb -fv -t js/template.js"
+    - "{{.PYRUN}} unicodedata-reader gc -fv -t js/template.js"
+
+  install-git-hooks:
+    desc: Create git hooks
+    cmds:
+      - echo '#!/bin/sh' > .git/hooks/pre-push
+      - echo 'task check' >> .git/hooks/pre-push
+      - cmd: chmod +x .git/hooks/pre-push
+        platforms: [linux, darwin]
+
+vars:
+  PYRUN: uv run

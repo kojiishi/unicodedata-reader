@@ -27,14 +27,22 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    # https://taskfile.dev/docs/installation#github-actions
+    - name: Install Task
+      uses: go-task/setup-task@v1
+
     - name: Install dependencies
       run: |
         uv sync --all-extras --dev
 
-    - name: Test with pytest
+    - name: Test
       run: |
-        uv run pytest
+        task test
 
-    - name: lint with ruff
+    - name: Lint
       run: |
-        uv run ruff check
+        task lint
+
+    - name: Format check
+      run: |
+        task fmtchk
