@@ -12,16 +12,16 @@ tasks:
     - task: fmtchk
     - git diff --exit-code
 
-  fix: "{{.PYRUN}} ruff check --fix {{.CLI_ARGS}}"
-  fmt: "{{.PYRUN}} yapf -ir -vv . {{.CLI_ARGS}}"
-  fmtchk: "{{.PYRUN}} yapf -qr -vv . {{.CLI_ARGS}}"
-  lint: "{{.PYRUN}} ruff check {{.CLI_ARGS}}"
-  test: "{{.PYRUN}} pytest tests {{.PYTEST}} {{.CLI_ARGS}}"
-  tests: "{{.PYRUN}} tox {{.TOX}} {{.CLI_ARGS}}"
+  fix: "{{.RUN}} ruff check --fix {{.CLI_ARGS}}"
+  fmt: "{{.RUN}} ruff format {{.CLI_ARGS}}"
+  fmtchk: "{{.RUN}} ruff format --check {{.CLI_ARGS}}"
+  lint: "{{.RUN}} ruff check {{.CLI_ARGS}}"
+  test: "{{.RUN}} pytest tests {{.PYTEST}} {{.CLI_ARGS}}"
+  tests: "{{.RUN}} tox {{.TOX}} {{.CLI_ARGS}}"
 
   gen:
-    - "{{.PYRUN}} unicodedata-reader lb -fv -t js/template.js {{.GEN}} {{.CLI_ARGS}}"
-    - "{{.PYRUN}} unicodedata-reader gc -fv -t js/template.js {{.GEN}} {{.CLI_ARGS}}"
+    - "{{.RUN}} unicodedata-reader lb -t js/template.js {{.GEN}} {{.CLI_ARGS}}"
+    - "{{.RUN}} unicodedata-reader gc -t js/template.js {{.GEN}} {{.CLI_ARGS}}"
 
   install-git-hooks:
     desc: Create git hooks
@@ -32,7 +32,7 @@ tasks:
         platforms: [linux, darwin]
 
 vars:
-  GEN:
-  PYRUN: uv run
+  GEN: -fv
   PYTEST:
+  RUN: uv run
   TOX: -p

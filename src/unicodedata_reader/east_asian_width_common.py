@@ -24,8 +24,7 @@ def dump_east_asian_width():
         "Bidi_Paired_Bracket_Type": lambda code, ch: bidi_brackets_type(code),
         "EAW": lambda code, ch: unicodedata.east_asian_width(ch),
         "Script": lambda code, ch: scripts.get(code),
-        "ScriptExt":
-        lambda code, ch: " ".join(script_extensions.get(code, [])),
+        "ScriptExt": lambda code, ch: " ".join(script_extensions.get(code, [])),
     }
     sep = "\t"
     print(f"# {sep.join(columns.keys())},Name")

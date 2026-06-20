@@ -7,12 +7,12 @@ def test_line_break_value(reader):
     # Entries for testing, copied from:
     # https://www.unicode.org/Public/UNIDATA/LineBreak.txt
     expects = {
-        0x22: 'QU',
-        0x39: 'NU',
-        0x3A: 'IS',
-        0x3B: 'IS',
-        0x3C: 'AL',
-        0x378: 'XX',  # missing value.
+        0x22: "QU",
+        0x39: "NU",
+        0x3A: "IS",
+        0x3B: "IS",
+        0x3C: "AL",
+        0x378: "XX",  # missing value.
     }
 
     lb = reader.line_break()
@@ -42,7 +42,7 @@ def test_line_break_value(reader):
     lb.map_values_to_int()
     for code, value_expected in expects.items():
         value = lb.value(code)
-        if value == 'XX':
+        if value == "XX":
             # Missing values are computed that they are not mapped.
             assert value == value_expected
         else:

@@ -2,24 +2,24 @@ from unicodedata_reader import *
 
 
 def test_hex():
-    assert u_hex(1) == '0001'
-    assert u_hex(0xfeff) == 'FEFF'
-    assert u_hex(0x12345) == '12345'
+    assert u_hex(1) == "0001"
+    assert u_hex(0xFEFF) == "FEFF"
+    assert u_hex(0x12345) == "12345"
 
 
 def test_east_asian_width(reader):
     entries = reader.east_asian_width()
-    assert entries.value(0x20) == 'Na'
-    assert entries.value(0xB7) == 'A'
-    assert entries.value(0x3000) == 'F'
-    assert entries.value(0x3001) == 'W'
-    assert entries.value(0x2A700) == 'W'
+    assert entries.value(0x20) == "Na"
+    assert entries.value(0xB7) == "A"
+    assert entries.value(0x3000) == "F"
+    assert entries.value(0x3001) == "W"
+    assert entries.value(0x2A700) == "W"
 
 
 def test_name(reader):
     entries = reader.name()
-    assert entries.value(0x20) == 'SPACE'
-    assert entries.value(0xE0100) == 'VARIATION SELECTOR-17'
+    assert entries.value(0x20) == "SPACE"
+    assert entries.value(0xE0100) == "VARIATION SELECTOR-17"
 
 
 def test_context():
