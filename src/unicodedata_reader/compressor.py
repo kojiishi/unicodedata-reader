@@ -9,7 +9,7 @@ from typing import Optional
 
 from unicodedata_reader import *
 
-_logger = logging.getLogger('UnicodeDataCompressor')
+_logger = logging.getLogger("UnicodeDataCompressor")
 
 
 def _init_logging(verbose: int):
@@ -22,7 +22,6 @@ def _init_logging(verbose: int):
 
 
 class UnicodeDataCompressor(object):
-
     def __init__(self, entries: UnicodeDataEntries):
         self._entries = entries
 
@@ -62,16 +61,23 @@ class UnicodeDataCompressor(object):
             assert entry.value < (1 << value_bits)
             assert entry.count > 0
             combined = ((entry.count - 1) << value_bits) | entry.value
-            _logger.debug('%04X %s=%d: %d -> %X', entry.min,
-                          entries.values_for_int()[entry.value], entry.value,
-                          entry.count, combined)
+            _logger.debug(
+                "%04X %s=%d: %d -> %X",
+                entry.min,
+                entries.values_for_int()[entry.value],
+                entry.value,
+                entry.count,
+                combined,
+            )
             bytes.extend(self._to_bytes(combined))
         return bytes
 
-    def substitute_template(self,
-                            template: pathlib.Path,
-                            output: Optional[pathlib.Path] = None,
-                            name: Optional[str] = None) -> str:
+    def substitute_template(
+        self,
+        template: pathlib.Path,
+        output: Optional[pathlib.Path] = None,
+        name: Optional[str] = None,
+    ) -> str:
         entries = self._entries
         bytes = self.compress()
         base64bytes = base64.b64encode(bytes)
@@ -79,15 +85,20 @@ class UnicodeDataCompressor(object):
         value_bits = self._bitsize
         name = name or entries.name
         assert name
-        _logger.info('%s: Bytes=%d, Base64=%d, #values=%d (%d bits)', name,
-                     len(bytes), len(base64bytes), len(values_for_int),
-                     value_bits)
+        _logger.info(
+            "%s: Bytes=%d, Base64=%d, #values=%d (%d bits)",
+            name,
+            len(bytes),
+            len(base64bytes),
+            len(values_for_int),
+            value_bits,
+        )
         mapping = {
-            'NAME': name,
-            'BASE64BYTES': base64bytes.decode('ascii'),
-            'VALUE_BITS': str(value_bits),
-            'VALUE_MASK': str((1 << value_bits) - 1),
-            'VALUE_LIST': ','.join(f'"{v}"' for v in values_for_int),
+            "NAME": name,
+            "BASE64BYTES": base64bytes.decode("ascii"),
+            "VALUE_BITS": str(value_bits),
+            "VALUE_MASK": str((1 << value_bits) - 1),
+            "VALUE_LIST": ",".join(f'"{v}"' for v in values_for_int),
         }
 
         text = template.read_text()
@@ -95,13 +106,13 @@ class UnicodeDataCompressor(object):
         text = text.substitute(mapping)
 
         if output:
-            if str(output) == '-':
+            if str(output) == "-":
                 sys.stdout.write(text)
             else:
                 if output.is_dir():
-                    output = output / f'{name}{template.suffix}'
-                output.write_text(text, newline='\n')
-                _logger.info('Saved to %s', output)
+                    output = output / f"{name}{template.suffix}"
+                output.write_text(text, newline="\n")
+                _logger.info("Saved to %s", output)
 
         return text
 
@@ -109,16 +120,14 @@ class UnicodeDataCompressor(object):
 def main():
     this_dir = pathlib.Path(__file__).resolve().parent
     parser = argparse.ArgumentParser()
-    parser.add_argument('--name', default='LineBreak')
-    parser.add_argument('--template',
-                        type=pathlib.Path,
-                        default=this_dir.parent / 'js' / 'template.js')
-    parser.add_argument('-o', '--output', type=pathlib.Path)
-    parser.add_argument('-v',
-                        '--verbose',
-                        help='increase output verbosity',
-                        action='count',
-                        default=0)
+    parser.add_argument("--name", default="LineBreak")
+    parser.add_argument(
+        "--template", type=pathlib.Path, default=this_dir.parent / "js" / "template.js"
+    )
+    parser.add_argument("-o", "--output", type=pathlib.Path)
+    parser.add_argument(
+        "-v", "--verbose", help="increase output verbosity", action="count", default=0
+    )
     args = parser.parse_args()
     _init_logging(args.verbose)
 
@@ -130,8 +139,9 @@ def main():
     output = args.output
     compressor = UnicodeDataCompressor(entries)
     compressor.substitute_template(
-        template, output=output if output else template.parent, name=args.name)
+        template, output=output if output else template.parent, name=args.name
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

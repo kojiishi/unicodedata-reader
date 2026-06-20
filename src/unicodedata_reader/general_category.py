@@ -7,16 +7,15 @@ from unicodedata_reader import *
 
 
 class UnicodeGeneralCategoryDataCli(UnicodeDataCli):
-
     def __init__(self):
         super().__init__()
         self._entries = UnicodeDataReader.default.general_category()
 
     def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
         return {
-            'GC': lambda code, ch: self._entries.value(code),
+            "GC": lambda code, ch: self._entries.value(code),
         }
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     UnicodeGeneralCategoryDataCli().main()

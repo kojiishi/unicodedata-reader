@@ -10,15 +10,17 @@ from unicodedata_reader.reader import *
 class Set(object):
     """A simple wrapper of a `set` of Unicode code points."""
 
-    def __init__(self,
-                 entries: Optional[UnicodeDataEntries] = None,
-                 predicate: Optional[Callable[[Any], bool]] = None) -> None:
+    def __init__(
+        self,
+        entries: Optional[UnicodeDataEntries] = None,
+        predicate: Optional[Callable[[Any], bool]] = None,
+    ) -> None:
         self.set = set()
         if entries:
             entries.add_to_set(predicate, self.set)
 
     @staticmethod
-    def east_asian_width(*values: str) -> 'Set':
+    def east_asian_width(*values: str) -> "Set":
         entries = UnicodeDataReader.default.east_asian_width()
         if len(values) == 1:
             value = values[0]
@@ -27,7 +29,7 @@ class Set(object):
         return Set(entries, lambda v: v in s)
 
     @staticmethod
-    def general_category(*values: str) -> 'Set':
+    def general_category(*values: str) -> "Set":
         entries = UnicodeDataReader.default.general_category()
         if len(values) == 1:
             value = values[0]
@@ -42,7 +44,7 @@ class Set(object):
         return Set(entries, predicate)
 
     @staticmethod
-    def scripts(*values: str) -> 'Set':
+    def scripts(*values: str) -> "Set":
         entries = UnicodeDataReader.default.scripts()
         if len(values) == 1:
             value = values[0]
@@ -51,7 +53,7 @@ class Set(object):
         return Set(entries, lambda v: v in s)
 
     @staticmethod
-    def script_extensions(*values: str) -> 'Set':
+    def script_extensions(*values: str) -> "Set":
         entries = UnicodeDataReader.default.script_extensions()
         if len(values) == 1:
             value = values[0]
@@ -65,15 +67,15 @@ class Set(object):
     def __iter__(self) -> Iterable[int]:
         return self.set.__iter__()
 
-    def __isub__(self, other: 'Set') -> 'Set':
+    def __isub__(self, other: "Set") -> "Set":
         self.set -= other.set
         return self
 
-    def __iand__(self, other: 'Set') -> 'Set':
+    def __iand__(self, other: "Set") -> "Set":
         self.set &= other.set
         return self
 
-    def __ior__(self, other: 'Set') -> 'Set':
+    def __ior__(self, other: "Set") -> "Set":
         self.set |= other.set
         return self
 
