@@ -8,6 +8,7 @@ tasks:
 
   check:
     - task: tests
+    - task: type
     - task: lint
     - task: fmtchk
     - git diff --exit-code
@@ -18,6 +19,7 @@ tasks:
   lint: "{{.RUN}} ruff check {{.CLI_ARGS}}"
   test: "{{.RUN}} pytest tests {{.PYTEST}} {{.CLI_ARGS}}"
   tests: "{{.RUN}} tox {{.TOX}} {{.CLI_ARGS}}"
+  type: "{{.RUN}} ty check {{.TY}} {{.CLI_ARGS}}"
 
   gen:
     - "{{.RUN}} unicodedata-reader lb -t js/template.js {{.GEN}} {{.CLI_ARGS}}"
@@ -36,3 +38,4 @@ vars:
   PYTEST:
   RUN: uv run
   TOX: -p
+  TY:

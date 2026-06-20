@@ -32,17 +32,16 @@ jobs:
       uses: go-task/setup-task@v2
 
     - name: Install dependencies
-      run: |
-        uv sync --all-extras --dev
+      run: uv sync --all-extras --dev
 
     - name: Test
-      run: |
-        task test
+      run: task test
+
+    - name: Type
+      run: task type
 
     - name: Lint
-      run: |
-        task lint
+      run: task lint
 
     - name: Format check
-      run: |
-        task fmtchk
+      run: task fmtchk

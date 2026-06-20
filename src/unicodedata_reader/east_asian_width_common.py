@@ -37,6 +37,7 @@ def dump_east_asian_width():
         if script != "Common":
             continue
         values = (func(code, ch) for func in columns.values())
+        values = ("" if v is None else str(v) for v in values)
         output = sep.join(values)
         try:
             output += f"{sep}{unicodedata.name(chr(code))}"

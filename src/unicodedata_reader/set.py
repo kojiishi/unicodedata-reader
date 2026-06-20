@@ -1,6 +1,6 @@
 from typing import Any
 from typing import Callable
-from typing import Iterable
+from typing import Iterator
 from typing import Optional
 
 from unicodedata_reader.entry import *
@@ -17,6 +17,7 @@ class Set(object):
     ) -> None:
         self.set = set()
         if entries:
+            assert predicate is not None
             entries.add_to_set(predicate, self.set)
 
     @staticmethod
@@ -59,12 +60,12 @@ class Set(object):
             value = values[0]
             return Set(entries, lambda v: value in v)
         s = set(values)
-        return Set(entries, lambda v: len(set(v) & s))
+        return Set(entries, lambda v: bool(set(v) & s))
 
     def __contains__(self, code_point: int) -> bool:
         return code_point in self.set
 
-    def __iter__(self) -> Iterable[int]:
+    def __iter__(self) -> Iterator[int]:
         return self.set.__iter__()
 
     def __isub__(self, other: "Set") -> "Set":
