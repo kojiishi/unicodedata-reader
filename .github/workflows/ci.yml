@@ -19,7 +19,7 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     # https://docs.astral.sh/uv/guides/integration/github/
     - name: Install uv and set up Python ${{ matrix.python-version }}
@@ -29,7 +29,7 @@ jobs:
 
     # https://taskfile.dev/docs/installation#github-actions
     - name: Install Task
-      uses: go-task/setup-task@v1
+      uses: go-task/setup-task@v2
 
     - name: Install dependencies
       run: |
