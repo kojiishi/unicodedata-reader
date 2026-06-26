@@ -32,6 +32,7 @@ def dump_bidi_brackets():
             last_block = block
         ch = chr(code)
         values = (func(code, ch) for func in columns.values())
+        values = ("" if v is None else str(v) for v in values)
         print(f"{' '.join(values)} # {unicodedata.name(chr(code))}")
 
 

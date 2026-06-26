@@ -2,7 +2,6 @@ import enum
 import itertools
 import logging
 import re
-import types
 from typing import Any
 from typing import Callable
 from typing import Dict
@@ -182,6 +181,8 @@ class UnicodeDataEntries(object):
     [Unicode character database]: https://unicode.org/reports/tr44/
     """
 
+    _entries: Sequence[UnicodeDataEntry]
+
     def __init__(
         self,
         entries: Optional[
@@ -198,7 +199,7 @@ class UnicodeDataEntries(object):
         if entries is not None:
             assert lines is None
             assert converter is None
-            self._entries = entries
+            self._entries = entries  # type: ignore
         else:
             assert lines is not None
             self._load_lines(lines, converter=converter)
@@ -218,8 +219,8 @@ class UnicodeDataEntries(object):
             self._missing_entries.extend(entries)
             assert self._missing_entries
 
-    def _ensure_multi_iterable(self):
-        if isinstance(self._entries, types.GeneratorType):
+    def _ensure_multi_iterable(self) -> None:
+        if not isinstance(self._entries, (list, tuple)):
             self._entries = tuple(self._entries)
 
     def __iter__(self):
@@ -242,16 +243,19 @@ class UnicodeDataEntries(object):
         return None
 
     def _is_contiguous(self):
+        self._ensure_multi_iterable()
         entries = self._entries
         return all(
             entries[i].max + 1 == entries[i + 1].min for i in range(len(entries) - 1)
         )
 
     def _is_distinct(self):
+        self._ensure_multi_iterable()
         entries = self._entries
         return all(entries[i].max < entries[i + 1].min for i in range(len(entries) - 1))
 
     def _is_sorted(self):
+        self._ensure_multi_iterable()
         entries = self._entries
         return all(
             entries[i].min <= entries[i + 1].min for i in range(len(entries) - 1)

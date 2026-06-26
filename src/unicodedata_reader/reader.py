@@ -22,7 +22,7 @@ class UnicodeDataReader(object):
     [Unicode character database]: https://unicode.org/reports/tr44/
     """
 
-    default = None
+    default: "UnicodeDataReader" = None  # type: ignore
     is_caching_allowed = True
 
     def __init__(

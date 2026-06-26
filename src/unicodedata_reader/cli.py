@@ -8,6 +8,7 @@ from typing import Callable
 from typing import Dict
 from typing import Iterable
 from typing import Optional
+from typing import Sequence
 import unicodedata
 
 from unicodedata_reader import *
@@ -74,6 +75,15 @@ def _init_logging(verbose):
 
 
 class UnicodeDataCli(object):
+    text: Optional[Sequence[str]]
+    clear_cache: bool
+    no_cache: bool
+    name: Optional[str]
+    template: Optional[pathlib.Path]
+    output: Optional[pathlib.Path]
+    verbose: int
+    _entries: UnicodeDataEntries
+
     def __init__(self):
         self._parse_args()
 
@@ -96,12 +106,12 @@ class UnicodeDataCli(object):
     def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
         raise NotImplementedError()
 
-    def _unicodes(self) -> Optional[Iterable[int]]:
+    def _unicodes(self) -> Iterable[int]:
         if self.text:
             return to_unicodes(self.text)
         return self._default_unicodes()
 
-    def _default_unicodes(self) -> Optional[Iterable[int]]:
+    def _default_unicodes(self) -> Iterable[int]:
         return self._entries.unicodes()
 
     def print(self):
