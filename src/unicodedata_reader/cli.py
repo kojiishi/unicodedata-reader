@@ -12,6 +12,7 @@ from typing import Sequence
 import unicodedata
 
 from unicodedata_reader import *
+from unicodedata_reader import __version__
 
 
 def _to_unicodes_from_str(text):
@@ -153,6 +154,9 @@ class UnicodeDataCli(object):
             help="increase output verbosity",
             action="count",
             default=0,
+        )
+        parser.add_argument(
+            "-V", "--version", action="version", version=f"%(prog)s {__version__}"
         )
         parser.parse_args(namespace=self)
         _init_logging(self.verbose)  # pytype: disable=attribute-error
