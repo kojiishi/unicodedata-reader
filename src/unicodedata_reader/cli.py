@@ -11,8 +11,14 @@ from typing import Optional
 from typing import Sequence
 import unicodedata
 
-from unicodedata_reader import *
-from unicodedata_reader import __version__
+from .entry import u_hex, UnicodeDataEntries
+from .compressor import UnicodeDataCompressor
+from .reader import UnicodeDataReader, UnicodeDataCachedReader
+
+try:
+    from ._version import version as __version__
+except ImportError:
+    __version__ = "0.0.0+unknown"
 
 
 def _to_unicodes_from_str(text):

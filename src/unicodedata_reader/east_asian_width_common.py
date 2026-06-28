@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import unicodedata
 
-from unicodedata_reader import *
+from .entry import u_hex
+from .reader import UnicodeDataReader
 
 
 def dump_east_asian_width():
