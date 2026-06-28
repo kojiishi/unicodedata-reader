@@ -4,7 +4,9 @@ from typing import Any
 from typing import Callable
 from typing import Dict
 
-from unicodedata_reader import *
+from .cli import UnicodeDataCli
+from .entry import u_enc
+from .reader import UnicodeDataReader
 
 
 class UnicodeVerticalOrientationDataCli(UnicodeDataCli):

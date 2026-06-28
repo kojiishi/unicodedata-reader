@@ -4,7 +4,8 @@ from typing import Any
 from typing import Callable
 from typing import Dict
 
-from unicodedata_reader import *
+from .cli import UnicodeDataCli
+from .reader import UnicodeDataReader
 
 
 class UnicodeLineBreakDataCli(UnicodeDataCli):

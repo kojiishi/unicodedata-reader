@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import unicodedata
 
-from unicodedata_reader import *
+from .cli import get_unicodes_from_args
+from .entry import u_hex
+from .reader import UnicodeDataReader
 
 
 def dump_bidi_brackets():

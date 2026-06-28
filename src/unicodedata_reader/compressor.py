@@ -7,7 +7,8 @@ import string
 import sys
 from typing import Optional
 
-from unicodedata_reader import *
+from .entry import UnicodeDataEntries
+from .reader import UnicodeDataReader
 
 _logger = logging.getLogger("UnicodeDataCompressor")
 
