@@ -29,7 +29,7 @@ def dump_east_asian_width():
     }
     sep = "\t"
     print(f"# {sep.join(columns.keys())},Name")
-    for code in blocks.keys():
+    for code in blocks:
         ch = chr(code)
         eaw = unicodedata.east_asian_width(ch)
         if eaw is None or not (eaw == "F" or eaw == "W" or eaw == "H"):
@@ -42,7 +42,7 @@ def dump_east_asian_width():
         output = sep.join(values)
         try:
             output += f"{sep}{unicodedata.name(chr(code))}"
-        except:  # noqa: E722
+        except:  # noqa: E722, S110
             pass
         print(output)
 

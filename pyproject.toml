@@ -30,14 +30,16 @@ unicodedata-reader = 'unicodedata_reader.__main__:main'
 requires = ["setuptools>=83.0.0", "setuptools-scm>=10.2.1"]
 build-backend = "setuptools.build_meta"
 
-[tool.ruff.lint]
-ignore = [
-    "F403", # `from ... import *` used; unable to detect undefined names
-    "F405", # `...` may be undefined, or defined from star imports
-]
-
 [tool.pytest.ini_options]
 testpaths = "tests"
+
+[tool.ruff.lint]
+ignore = [
+    "EXE001", # Shebang is present but file is not executable
+    "F403", # `from ... import *` used; unable to detect undefined names
+    "F405", # `...` may be undefined, or defined from star imports
+    "PYI034", # return type `Self` doesn't work with 3.10
+]
 
 [tool.setuptools_scm]
 # https://github.com/pypa/setuptools-scm

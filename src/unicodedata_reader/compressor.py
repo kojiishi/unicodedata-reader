@@ -5,7 +5,6 @@ import logging
 import pathlib
 import string
 import sys
-from typing import Optional
 
 from .entry import UnicodeDataEntries
 from .reader import UnicodeDataReader
@@ -22,7 +21,7 @@ def _init_logging(verbose: int):
     logging.basicConfig(level=logging.DEBUG)
 
 
-class UnicodeDataCompressor(object):
+class UnicodeDataCompressor:
     def __init__(self, entries: UnicodeDataEntries):
         self._entries = entries
 
@@ -48,7 +47,7 @@ class UnicodeDataCompressor(object):
             value >>= 7
         bytes.append(value)
         bytes.reverse()
-        for i in range(0, len(bytes) - 1):
+        for i in range(len(bytes) - 1):
             bytes[i] |= 0x80
         return bytes
 
@@ -76,8 +75,8 @@ class UnicodeDataCompressor(object):
     def substitute_template(
         self,
         template: pathlib.Path,
-        output: Optional[pathlib.Path] = None,
-        name: Optional[str] = None,
+        output: pathlib.Path | None = None,
+        name: str | None = None,
     ) -> str:
         entries = self._entries
         bytes = self.compress()

@@ -1,9 +1,9 @@
-from pathlib import Path
-import pytest
 import sys
+from pathlib import Path
 
-from unicodedata_reader import UnicodeDataCachedReader
-from unicodedata_reader import UnicodeDataReader
+import pytest
+
+from unicodedata_reader import UnicodeDataCachedReader, UnicodeDataReader
 
 tests_dir = Path(__file__).parent
 root_dir = tests_dir.parent
