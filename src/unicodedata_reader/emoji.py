@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
+from collections.abc import Callable
 from typing import Any
-from typing import Callable
-from typing import Dict
 
 from .cli import UnicodeDataCli
 from .entry import EmojiType
@@ -16,7 +15,7 @@ class UnicodeEmojiDataCli(UnicodeDataCli):
     def _emoji_flag_func(self, mask: EmojiType):
         return lambda code, ch: 1 if self._entries.value(code) & mask else 0
 
-    def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
+    def _core_columns(self) -> dict[str, Callable[[int, str], Any]]:
         return {
             "Emoji": self._emoji_flag_func(EmojiType.Emoji),
             "Emoji_Presentation": self._emoji_flag_func(EmojiType.Emoji_Presentation),

@@ -2,15 +2,8 @@ import enum
 import itertools
 import logging
 import re
+from collections.abc import Callable, Iterable, Sequence
 from typing import Any
-from typing import Callable
-from typing import Dict
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Sequence
-from typing import Union
-from typing import Tuple
 
 _logger = logging.getLogger("UnicodeDataEntry")
 
@@ -26,7 +19,7 @@ def u_enc(c, encoding):
     return u_hex(code) if code else ""
 
 
-class BidiBrackets(object):
+class BidiBrackets:
     def __init__(self, pair: int, type: str):
         self.pair = pair
         self.type = type
@@ -46,7 +39,7 @@ class EmojiType(enum.Flag):
     Extended_Pictographic = enum.auto()
 
 
-class UnicodeDataEntry(object):
+class UnicodeDataEntry:
     """Represents a line in a [Unicode character database] file.
 
     This class consists of:
@@ -143,7 +136,7 @@ class UnicodeDataEntry(object):
                 assert False
 
     @staticmethod
-    def from_pairs(values: Iterable[Tuple[int, Any]]):
+    def from_pairs(values: Iterable[tuple[int, Any]]):
         last_value = None
         min = -1
         last_code = -1
@@ -175,7 +168,7 @@ class UnicodeDataEntry(object):
             next = entry.max + 1
 
 
-class UnicodeDataEntries(object):
+class UnicodeDataEntries:
     """Represents a [Unicode character database] file,
     or a list of `UnicodeDataEntry`.
     [Unicode character database]: https://unicode.org/reports/tr44/
@@ -185,11 +178,9 @@ class UnicodeDataEntries(object):
 
     def __init__(
         self,
-        entries: Optional[
-            Union[Iterable[UnicodeDataEntry], Sequence[UnicodeDataEntry]]
-        ] = None,
-        name: Optional[str] = None,
-        lines: Optional[Iterable[str]] = None,
+        entries: Iterable[UnicodeDataEntry] | Sequence[UnicodeDataEntry] | None = None,
+        name: str | None = None,
+        lines: Iterable[str] | None = None,
         converter=None,
     ):
         self._missing_entries = self._default_missing_entries()
@@ -204,7 +195,7 @@ class UnicodeDataEntries(object):
             assert lines is not None
             self._load_lines(lines, converter=converter)
 
-    def _default_missing_entries(self) -> List[UnicodeDataEntry]:
+    def _default_missing_entries(self) -> list[UnicodeDataEntry]:
         return []
 
     def _load_lines(self, lines: Iterable[str], converter=None):
@@ -347,7 +338,7 @@ class UnicodeDataEntries(object):
             value_list[index] = value
         self._values_for_int = value_list
 
-    def to_dict(self) -> Dict[int, Any]:
+    def to_dict(self) -> dict[int, Any]:
         """Returns a `dict` of values with a Unicode code point as the key."""
         self._ensure_multi_iterable()
         dict = {}

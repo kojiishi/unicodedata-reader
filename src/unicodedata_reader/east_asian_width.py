@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import unicodedata
+from collections.abc import Callable
 from typing import Any
-from typing import Callable
-from typing import Dict
 
 from .cli import UnicodeDataCli
 from .entry import u_enc
@@ -14,7 +13,7 @@ class UnicodeEastAsianWidthDataCli(UnicodeDataCli):
         super().__init__()
         self._entries = UnicodeDataReader.default.east_asian_width()
 
-    def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
+    def _core_columns(self) -> dict[str, Callable[[int, str], Any]]:
         return {
             "EA": lambda code, ch: self._entries.value(code),
             "GC": lambda code, ch: unicodedata.category(ch),

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
+from collections.abc import Callable
 from typing import Any
-from typing import Callable
-from typing import Dict
 
 from .cli import UnicodeDataCli
 from .reader import UnicodeDataReader
@@ -12,7 +11,7 @@ class UnicodeGeneralCategoryDataCli(UnicodeDataCli):
         super().__init__()
         self._entries = UnicodeDataReader.default.general_category()
 
-    def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
+    def _core_columns(self) -> dict[str, Callable[[int, str], Any]]:
         return {
             "GC": lambda code, ch: self._entries.value(code),
         }

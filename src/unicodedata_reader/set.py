@@ -1,19 +1,17 @@
+from collections.abc import Callable, Iterator
 from typing import Any
-from typing import Callable
-from typing import Iterator
-from typing import Optional
 
 from unicodedata_reader.entry import *
 from unicodedata_reader.reader import *
 
 
-class Set(object):
+class Set:
     """A simple wrapper of a `set` of Unicode code points."""
 
     def __init__(
         self,
-        entries: Optional[UnicodeDataEntries] = None,
-        predicate: Optional[Callable[[Any], bool]] = None,
+        entries: UnicodeDataEntries | None = None,
+        predicate: Callable[[Any], bool] | None = None,
     ) -> None:
         self.set = set()
         if entries:

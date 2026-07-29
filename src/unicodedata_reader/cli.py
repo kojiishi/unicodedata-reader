@@ -3,17 +3,13 @@ import itertools
 import logging
 import pathlib
 import re
-from typing import Any
-from typing import Callable
-from typing import Dict
-from typing import Iterable
-from typing import Optional
-from typing import Sequence
 import unicodedata
+from collections.abc import Callable, Iterable, Sequence
+from typing import Any
 
-from .entry import u_hex, UnicodeDataEntries
 from .compressor import UnicodeDataCompressor
-from .reader import UnicodeDataReader, UnicodeDataCachedReader
+from .entry import UnicodeDataEntries, u_hex
+from .reader import UnicodeDataCachedReader, UnicodeDataReader
 
 try:
     from ._version import version as __version__
@@ -81,20 +77,20 @@ def _init_logging(verbose):
     logging.basicConfig(level=logging.DEBUG)
 
 
-class UnicodeDataCli(object):
-    text: Optional[Sequence[str]]
+class UnicodeDataCli:
+    text: Sequence[str] | None
     clear_cache: bool
     no_cache: bool
-    name: Optional[str]
-    template: Optional[pathlib.Path]
-    output: Optional[pathlib.Path]
+    name: str | None
+    template: pathlib.Path | None
+    output: pathlib.Path | None
     verbose: int
     _entries: UnicodeDataEntries
 
     def __init__(self):
         self._parse_args()
 
-    def _columns(self) -> Dict[str, Callable[[int, str], Any]]:
+    def _columns(self) -> dict[str, Callable[[int, str], Any]]:
         columns = self._core_columns()
         columns = dict(
             itertools.chain(
@@ -110,7 +106,7 @@ class UnicodeDataCli(object):
         )
         return columns
 
-    def _core_columns(self) -> Dict[str, Callable[[int, str], Any]]:
+    def _core_columns(self) -> dict[str, Callable[[int, str], Any]]:
         raise NotImplementedError()
 
     def _unicodes(self) -> Iterable[int]:
@@ -123,7 +119,7 @@ class UnicodeDataCli(object):
 
     def print(self):
         columns = self._columns()
-        print("\t".join(key for key in columns.keys()))
+        print("\t".join(key for key in columns))
         for code in self._unicodes():
             try:
                 ch = chr(code)

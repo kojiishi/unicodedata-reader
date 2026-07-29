@@ -3,8 +3,8 @@ try:
 except ImportError:
     __version__ = "0.0.0+unknown"
 
+from .cli import *
+from .compressor import *
 from .entry import *
 from .reader import *
-from .compressor import *
-from .cli import *
 from .set import *

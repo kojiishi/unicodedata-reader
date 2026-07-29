@@ -1,16 +1,15 @@
 import logging
-from pathlib import Path
-from typing import Iterable
-from typing import Optional
 import shutil
 import urllib.request
+from collections.abc import Iterable
+from pathlib import Path
 
 from unicodedata_reader.entry import *
 
 _logger = logging.getLogger("UnicodeDataReader")
 
 
-class UnicodeDataReader(object):
+class UnicodeDataReader:
     """Read [Unicode character database] data files.
 
     This class parses data in the [Unicode character database].
@@ -30,7 +29,7 @@ class UnicodeDataReader(object):
     ) -> None:
         self.url_template = url_template
 
-    class Context(object):
+    class Context:
         """This class changes `UnicodeDataReader.default` while in the context,
         and restores when exit."""
 
@@ -44,7 +43,6 @@ class UnicodeDataReader(object):
 
         def __exit__(self, exc_type, exc_val, exc_tb):
             UnicodeDataReader.default = self.saved_default
-            return None
 
     def bidi_brackets(self) -> UnicodeDataEntries:
         name = "BidiBrackets"
@@ -119,10 +117,10 @@ class UnicodeDataCachedReader(UnicodeDataReader):
 
     def __init__(
         self,
-        reader: UnicodeDataReader = UnicodeDataReader(),
-        cache_dir: Optional[Path] = None,
+        reader: UnicodeDataReader | None = None,
+        cache_dir: Path | None = None,
     ):
-        self._reader = reader
+        self._reader = reader if reader else UnicodeDataReader()
         self._cache_dir = cache_dir
 
     def read_lines(self, name: str) -> Iterable[str]:
@@ -141,7 +139,7 @@ class UnicodeDataCachedReader(UnicodeDataReader):
 
         return lines
 
-    def _cache_path(self, name: str) -> Optional[Path]:
+    def _cache_path(self, name: str) -> Path | None:
         if not UnicodeDataCachedReader.is_caching_allowed:
             return None
         if self._cache_dir:

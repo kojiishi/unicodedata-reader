@@ -1,12 +1,11 @@
 import pathlib
 import sys
 
-import unicodedata_reader.bidi_brackets as bidi_brackets
 import unicodedata_reader.east_asian_width as ea
-import unicodedata_reader.emoji as emoji
 import unicodedata_reader.general_category as gc
 import unicodedata_reader.line_break as lb
 import unicodedata_reader.vertical_orientation as vo
+from unicodedata_reader import bidi_brackets, emoji
 
 
 def main():
