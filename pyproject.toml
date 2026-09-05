@@ -8,7 +8,7 @@ readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.10"
 dependencies = [
-    "platformdirs>=4.11.4",
+    "platformdirs>=4.11.7",
 ]
 
 [project.urls]
@@ -18,8 +18,8 @@ repository = "https://github.com/kojiishi/unicodedata-reader"
 dev = [
     "pyrefly>=1.2.0",
     "pytest>=9.1.1",
-    "ruff>=0.16.4",
-    "tox>=4.60.1",
+    "ruff>=0.16.5",
+    "tox>=4.61.2",
     "tox-uv>=1.36.0",
 ]
 
