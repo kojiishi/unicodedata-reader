@@ -8,7 +8,7 @@ readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.11"
 dependencies = [
-    "platformdirs>=4.14.0",
+    "platformdirs>=4.14.5",
 ]
 
 [project.urls]
@@ -19,8 +19,8 @@ dev = [
     "pyrefly>=1.4.0",
     "pytest>=9.2.0",
     "ruff>=0.17.3",
-    "tox>=4.67.4",
-    "tox-uv>=1.37.2",
+    "tox>=4.67.10",
+    "tox-uv>=1.37.5",
 ]
 
 [project.scripts]
