@@ -16,11 +16,11 @@ repository = "https://github.com/kojiishi/unicodedata-reader"
 
 [dependency-groups]
 dev = [
-    "pyrefly>=1.4.0",
+    "pyrefly>=1.4.1",
     "pytest>=9.2.0",
-    "ruff>=0.17.3",
-    "tox>=4.67.10",
-    "tox-uv>=1.37.5",
+    "ruff>=0.17.4",
+    "tox>=4.67.13",
+    "tox-uv>=1.37.7",
 ]
 
 [project.scripts]
